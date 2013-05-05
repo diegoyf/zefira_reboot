@@ -1,0 +1,16 @@
+{% autoescape None %}
+<html>
+  <head>
+    <title> {{ page_title }} </title>
+    </head>
+  <body>
+    <h1> {{ header_text }} </h1>
+    <p> El box de Zefira :) Hola {{ user['_id'] }} </p>
+    <h2> Beneficios Disponibles </h2>
+    {% for benefit in search %}
+	{{ modules.Benefit(benefit) }}
+	{% end $}
+    {% end %}
+    <p> Para salir: <a href="/logout" /> Salir </a> </p>
+  </body>
+</html>

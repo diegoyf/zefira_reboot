@@ -1,0 +1,16 @@
+
+<div id="loginform" > 
+  <p> Si tienes un nombre de usuario ingresa </p>
+	
+    <form action="/login" method="POST">
+      {% raw xsrf_form_html() %}
+      <label for="username">Nombre Usuario</label></br>
+	<input type="text" name="username" id="username" />
+	</br>
+	<label for="password"> Contraseña </label></br>
+      <input type="password" name="password" id="password" /></br>
+	<input type="hidden" value="companies" name="branch" id="branch"/>
+      <input type="submit" value="Log In" />
+    </form>
+</div>
+

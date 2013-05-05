@@ -1,0 +1,17 @@
+<html>
+  <head>
+    <title>{{ page_title }}</title>
+  <body>
+    <h1> {{ header_text }} </h1>	
+	<p> Si tienes un nombre de usuario ingresa </p>
+	
+    <form action="/login" method="POST">
+      {% raw xsrf_form_html() %}
+      Username: <input type="text" name="username" id="username" />
+	</br>
+      Password : <input type="password" name="password" id="password" />
+	<input type="hidden" value="clientes" />
+      <input type="submit" value="Log In" />
+    </form>
+  </body>
+</html>

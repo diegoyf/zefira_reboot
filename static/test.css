@@ -1,0 +1,70 @@
+#sidebar {
+    border-right: 1px solid black;
+    height:100%;
+}
+
+div.centre
+{
+  width: 800px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* footer */
+footer {
+margin-top: 45px;
+padding-top: 5px;
+border-top: 1px solid #eaeaea;
+color: black;
+}
+footer a {
+color: #555;
+}
+footer a:hover {
+color: #222;
+}
+footer small {
+float: left;
+}
+footer ul {
+float: left;
+list-style: none;
+}
+footer ul li {
+float: left;
+margin-left: 10px;
+}
+
+div.container
+{
+	height: 500px;
+}
+
+#logo {
+	float:left;
+	font-size: 1.7em;
+	margin-right : 10px;
+	text-transform : uppercase;
+	letter-spacing: -1px;
+	font-weight: bold;
+	color:black;
+}
+
+#logo:hover {
+color: gray;
+text-decoration: none;
+}
+
+.navform {
+	padding: 15px; padding-bottom: 0px;
+}
+
+form label {
+	font-weight:bold;
+}
+
+form input .login{
+	width: 80px;
+}
+

@@ -1,0 +1,11 @@
+$('form').submit(function(e){
+    e.preventDefault();
+    $.ajax(
+    url: '/box'
+    type: 'post'
+    success: function(){
+         $('#button').val('Reservado')
+    });
+});
+
+ 

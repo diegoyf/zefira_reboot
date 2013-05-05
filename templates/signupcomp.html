@@ -1,0 +1,19 @@
+<div id="signupform" >
+
+<form action="/signup" method="post" id="form">
+{% raw xsrf_form_html() %}
+
+<input type="text" name="nombre" placeholder="Nombre"/></br>
+<input type="text" name="apellido" placeholder="Apellido"/>
+</br>
+<input type="text" name="password" id="password" placeholder="Contraseña"/>
+
+</br>
+<input type="text" name="email" id="email" placeholder="E-mail"/>
+</br>
+<input type="hidden" value="empresas" name="branch" id="branch"/>
+<input type="submit" class="btn btn-primary "value="Registrate" />
+
+</form>
+</div>
+
