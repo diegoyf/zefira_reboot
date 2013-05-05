@@ -90,6 +90,8 @@ class LoginHandler(BaseHandler):
                     header_text= "Ingresa a Zefira",  
                     )
     def post(self):
+
+        
         self.set_secure_cookie("username", self.get_argument("username"))
         self.set_secure_cookie("password", self.get_argument("password"))
         self.set_secure_cookie("branch", self.get_argument("branch"))
@@ -114,10 +116,11 @@ Tipo Request: POST"""
 class SignUpHandler(BaseHandler):
     def post(self):
 
+        branch = self.get_argument("branch")
         self.set_secure_cookie("username", self.get_argument("username"))
         self.set_secure_cookie("password", self.get_argument("password"))
         self.set_secure_cookie("branch", self.get_argument("branch"))
-        self.redirect(self.data_manager.create_user(new_user,branch,request.arguments))
+        self.redirect(self.data_manager.create_user(branch,self.request.arguments))
 
 """Clase que maneja la presentacion del layout principal de 
  la aplicacion en el area de los clientes Tipo Request: GET"""       

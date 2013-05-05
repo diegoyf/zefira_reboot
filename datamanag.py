@@ -40,7 +40,11 @@ class DataManagement():
 				'_id':"user"+base64.b64encode(uuid.uuid4().bytes + uuid.uuid4().bytes),
                 'username' : request_args['username'][0],
                 'password': request_args['password'][0],
-                'info':{'email': request_args['email'][0]},
+                'info':{
+                	'email': request_args['email'][0],
+                	'name' : request_args['nombre'][0],
+                	'last_name': request_args['apellido'][0]
+                	},
                 'interests': [],
                 'reserves' : [],
                 'session' : {'benefits': []}
