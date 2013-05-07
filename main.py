@@ -33,7 +33,7 @@ class Application(tornado.web.Application):
             (r"/signup", SignUpHandler),
             (r"/box", BoxHandler),
             (r"/cbox", CBoxHandler),
-            #(r"/publish", requesthandlers.PublishHandler),
+            (r"/publish", PublishBenefitHandler),
             #(r"/companies", requesthandlers.CompaniesHandler),
             #(r"/error", requesthandlers.ErrorHandler)
             ]
@@ -146,16 +146,44 @@ la aplicacion en el area de las empresas """
 class CBoxHandler(BaseHandler):
     def get(self):
         benefits_published = self.current_user['benefits']
+        
+        
         if len(benefits_published) == 0 or benefits_published == None : 
             benefits_deref = None
         else:
+
             benefits_deref = self.data_manager.fetch_benefits_cmp(
-                benefits_published) 
+                benefits_published)
+
+            
+              
+
         self.render(
             "cbox.html",
             page_title = "Zefira | Company Box",
-            benefits = benefits_deref)
+            benefits = benefits_deref
+            )
 
+
+"""Handler que administra la publicacion de beneficios"""
+
+class PublishBenefitHandler(BaseHandler):
+    def post(self):
+        if self.data_manager.publish_benefit(self.request.arguments, 
+            self.current_user):
+            self.redirect("/cbox")
+        else:
+            self.redirect("/error")
+
+class EditBenefitHandler(BaseHandler):
+    def get(self):
+        pass  
+    def post(self):
+        pass 
+
+class DeleteBenefitHandler(BaseHandler):
+    def post(self):
+        pass   
 
 """Funcion principal que levanta la aplicacion """
 

@@ -2,7 +2,7 @@
 
 {% block body %}
 
-<form action="{{ request.path }}" method="post" >
+<form action="/publish" method="post" >
   {% raw xsrf_form_html() %}
   <input name="title" type="text" class="title" value"" />
   </br>

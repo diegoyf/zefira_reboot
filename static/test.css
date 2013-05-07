@@ -68,3 +68,6 @@ form input .login{
 	width: 80px;
 }
 
+textarea {
+	resize:none;
+}

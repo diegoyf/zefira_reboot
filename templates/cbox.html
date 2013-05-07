@@ -44,35 +44,67 @@
 		<div class="tababble">
 		<ul class="nav nav-pills">
 			<li class="active">
-				<a href="#cbox-panel" data-toggle="tab"> Box </a>
+				<a href="#historial-panel" data-toggle="tab"> Historial </a>
 			</li>
 
-			<li><a href="#reservas-panel" data-toggle="tab"> Reservas </a>
+			<li><a href="#actividad-panel" data-toggle="tab"> Actividad </a>
 				</li>
 				<li>
-					<a href="#eventos-panel" data-toggle="tab"> Eventos </a>
+					<a href="#publicaciones-panel" data-toggle="tab"> Publicaciones </a>
 				</li>
 			</ul>
 			<div class="tab-content">
-				<div id="cbox-panel" class="tab-pane active">
+				<div id="historial-panel" class="tab-pane active">
+					<h1> En construccion historial </h1>	
+
+
 					
+    			</div>
+    			<div id="actividad-panel" class="tab-pane">
+    				<h1> En construccion actividad</h1>
+    			</div>
+    			<div id="publicaciones-panel" class="tab-pane">
+    				<a href="#myModal" role="button" class="btn btn-primary" data-toggle="modal"> Publica Beneficio </a>
 
-
-					<h2> Beneficios Disponibles </h2>
+					<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  					<div class="modal-header " style="text-align:center;">
+    				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    				<h3 id="myModalLabel">Publicar Beneficio</h3>
+  					</div>
+  					<div class="modal-body" style="text-align:center;">
+    				<form action="/publish" method="post" >
+  					{% raw xsrf_form_html() %}
+  					<input name="title" type="text" class="title" placeholder="Titulo Beneficio" />
+  					</br>
+  					<textarea name="description" rows="10" cols="30"
+  					 placeholder="Descripcion Beneficio"></textarea> </br>
+					<label for="benefit_type">Tipo beneficio: </label>
+  					<select name="benefit_type">
+    				<option value="descuento">Descuento</option>
+    				<option value="promocion">Promocion</option>
+    				<option value="cortesia">Cortesia</option>
+    				<option value="grupal">Grupal</option>
+  					</select></br>
+  				
+  					</div>
+  					<div class="modal-footer">
+    				<button class="btn btn-primary " type="submit">Publicar</button>
+  					</div>
+  					 
+ 					</form>
+					</div>
 					{% if not benefits %}
-					<p> No has publicado ningun beneficio aun. Dirigete aqui para empezar: <a href="publish"> Ir </a>
+					
+					<div class="container">
+						<h3>No tienes beneficios publicados aun</h3 >
+						</div>s
+					
 					{% end %}
 					{% if benefits %}	
 					{% for benefit in benefits %}
 					{{ modules.BenefitCo(benefit) }}
 					{% end %}
     					{% end %}
-    			</div>
-    			<div id="reservas-panel" class="tab-pane">
-    				<h1> En construccion reservas</h1>
-    			</div>
-    			<div id="eventos-panel" class="tab-pane">
-    				<h1> En construccion eventos</h1>
     			</div>
     		</div>
     	</div>

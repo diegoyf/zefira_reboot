@@ -116,4 +116,56 @@ class DataManagement():
 			return None
 		for i in range(len(benefits_ref)):
 			benefits_deref.append(self.db.dereference(benefits_ref[i]))
-		return benefits_deref		
+		return benefits_deref
+
+	#Funcion que se encarga de la publicacion de beneficios
+
+	def publish_benefit(self, request_args, user):
+		import base64, uuid
+		import datetime
+		benefit = {
+			"_id":"bene"+base64.b64encode(uuid.uuid4().bytes + uuid.uuid4().bytes),
+            "title":request_args['title'][0],
+            "description": request_args['description'][0],
+            "company_name": user['info']['name'],
+            'date_published' : datetime.datetime.now(),
+            'active': True,
+            'dates_reserved': [],
+            'dates_validated': [],
+            'times_reserved': 0,
+            'times_validated': 0 ,
+            #'picture_id': '',
+            'benefit_type' :request_args['benefit_type'][0],
+		}
+
+		from bson.dbref import DBRef
+		if self.validate(benefit):
+			self.db.benefits.save(benefit)
+			user['benefits'].append(DBRef('benefits', benefit["_id"]))
+			self.db.companies.save(user)
+			return True
+		else:
+			return False
+
+	def validate(self,data):
+		branch= data['_id'][:4]
+
+		if branch == 'bene':
+
+			if not self.db.benefits.find_one({'_id': data['_id']}):
+				return True
+			else:
+				return False
+		elif branch == "comp":
+			if not self.db.companies.find_one({'_id':data['_id']}):
+				return True
+			else:
+				return False
+		else:
+			if not self.db.users.find_one({'_id': data['_id']}):
+				return True
+			else:
+				return False							
+
+
+
