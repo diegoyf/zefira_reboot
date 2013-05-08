@@ -167,5 +167,11 @@ class DataManagement():
 			else:
 				return False							
 
+	def update_activity_queue(self, company_id, benefit):
+		company = self.db.companies_queue.find_one({'_id': company_id})
+		company['queue'].append(benefit)
+		self.db.company_queue.save(company)
 
-
+	def fetch_activity_queue(self,company_id):
+			record = self.db.company_queue.find_one({'_id':company_id }, limit = 10)
+			return record['queue']		 		

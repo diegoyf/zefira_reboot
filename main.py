@@ -4,10 +4,12 @@ import tornado.httpserver
 import tornado.web
 import tornado.ioloop
 import tornado.options
+import tornado.gen
 import os.path
 import datetime
 import uimodules
 import requesthandlers
+import logging
 
 from tornado.options import define, options
 from datamanag import DataManagement
@@ -34,6 +36,7 @@ class Application(tornado.web.Application):
             (r"/box", BoxHandler),
             (r"/cbox", CBoxHandler),
             (r"/publish", PublishBenefitHandler),
+            (r"/activity", ActivityHandler)
             #(r"/companies", requesthandlers.CompaniesHandler),
             #(r"/error", requesthandlers.ErrorHandler)
             ]
@@ -161,7 +164,8 @@ class CBoxHandler(BaseHandler):
         self.render(
             "cbox.html",
             page_title = "Zefira | Company Box",
-            benefits = benefits_deref
+            benefits = benefits_deref,
+            company_id = self.current_user['_id']
             )
 
 
@@ -175,16 +179,35 @@ class PublishBenefitHandler(BaseHandler):
         else:
             self.redirect("/error")
 
-class EditBenefitHandler(BaseHandler):
+
+class ReserveHandler(BaseHandler):
+    def post(self):
+        company_id = self.get_argument("company_id", None)
+        benefit = {
+            'title' : self.get_argument("title")
+
+        } 
+        self.data_manager.update_activity_queue(company_id, benefit)
+"""ESta clase es la que va a necesitar tanto async mongo como tornado 
+asincrono. funciones en js :
+-convertir json a Div
+-polling para llamar a este script
+-obtener cookie segura
+falta administrar cursor y obviamente aprender como implementar esta
+vaina Asincronamente"""
+
+class ActivityHandler(BaseHandler):
+    
     def get(self):
-        pass  
-    def post(self):
-        pass 
-
-class DeleteBenefitHandler(BaseHandler):
-    def post(self):
-        pass   
-
+        import json
+        company_id = self.get_argument("company_id")
+        #logging.info(company_id)
+        updates =self.data_manager.fetch_activity_queue(company_id)
+        logging.info(json.dumps(updates))
+        self.write(json.dumps(updates))
+        
+         
+      
 """Funcion principal que levanta la aplicacion """
 
 def main():
