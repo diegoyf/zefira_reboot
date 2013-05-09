@@ -9,6 +9,45 @@ $(document).ready(function ($) {
 		{
 			waitForMsg();
 		}
+
+        if (window.location.pathname == "/box")
+        {   
+            var a = "Reservar";
+            var b = "Reservado";
+            var i = 0;
+
+            $(".beneficio").html(a);    
+            $(".beneficio").click(function(){
+                i++;
+                if (i%2 != 0) {
+
+                    $(this).html(b);
+                    
+                    var beneficio = {
+                        'title' : $(this).parent().find("[name='benefit_title']").text() ,
+                        'description' : $(this).parent().find("[name='benefit_desc']").text(),
+                        '_xsrf' : getCookie("_xsrf"),
+                        'action' : 'reserve'
+                    }
+                    
+
+                    $.ajax({
+                        url: '/reserve',
+                        type: "POST",
+                        data : beneficio,
+                        success: function(){
+                            console.log(beneficio);
+                        }});
+
+
+                    
+                }else {
+                    $(this).html(a);
+                    
+                }
+                });
+                
+        }
     });
 function addmsg(type, msg){
         /* Simple helper to add a div.
@@ -49,3 +88,9 @@ function waitForMsg(){
             }
         });
     };
+
+
+function getCookie(name) {
+    var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+    return r ? r[1] : undefined;
+}

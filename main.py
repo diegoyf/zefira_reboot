@@ -36,7 +36,8 @@ class Application(tornado.web.Application):
             (r"/box", BoxHandler),
             (r"/cbox", CBoxHandler),
             (r"/publish", PublishBenefitHandler),
-            (r"/activity", ActivityHandler)
+            (r"/activity", ActivityHandler),
+            (r"/reserve", ReserveHandler),
             #(r"/companies", requesthandlers.CompaniesHandler),
             #(r"/error", requesthandlers.ErrorHandler)
             ]
@@ -182,26 +183,20 @@ class PublishBenefitHandler(BaseHandler):
 
 class ReserveHandler(BaseHandler):
     def post(self):
-        company_id = self.get_argument("company_id", None)
-        benefit = {
-            'title' : self.get_argument("title")
+        import json
+        
+        action = self.request.arguments['action'][0]
 
-        } 
-        self.data_manager.update_activity_queue(company_id, benefit)
-"""ESta clase es la que va a necesitar tanto async mongo como tornado 
-asincrono. funciones en js :
--convertir json a Div
--polling para llamar a este script
--obtener cookie segura
-falta administrar cursor y obviamente aprender como implementar esta
-vaina Asincronamente"""
+        self.data_manager.update_activity_queue(action, self.request.arguments, company_id)
+        logging.info(json.dumps(action)) 
+
+"""Clase que maneja las respuestas  de la actividad de una empresa"""  
 
 class ActivityHandler(BaseHandler):
     
     def get(self):
         import json
         company_id = self.get_argument("company_id")
-        #logging.info(company_id)
         updates =self.data_manager.fetch_activity_queue(company_id)
         logging.info(json.dumps(updates))
         self.write(json.dumps(updates))
@@ -213,7 +208,7 @@ class ActivityHandler(BaseHandler):
 def main():
     tornado.options.parse_command_line()
     server = tornado.httpserver.HTTPServer(Application())
-    server.listen(8000)
+    server.listen(options.port)
     tornado.ioloop.IOLoop.instance().start()
 
 if __name__ == "__main__":
