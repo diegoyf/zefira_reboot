@@ -5,8 +5,8 @@
   <p name="benefit_type"> Tipo beneficio: {{ benefit['benefit_type'] }} </p>
   
      
-  <input type="hidden" id="benefit_id"value="{{ benefit['_id'] }}"/>
-  <input type="hidden" id="company_id" value="" />
+  <input type="hidden" id="benefit_id" name="benefit_id"value="{{ benefit['_id'] }}"/>
+  <input type="hidden" id="company_id" name="company_id" value="{{ benefit['company_id'] }}" />
   <div class="btn beneficio"> </div> 
 	{% module xsrf_form_html() %}
 

@@ -183,12 +183,12 @@ class PublishBenefitHandler(BaseHandler):
 
 class ReserveHandler(BaseHandler):
     def post(self):
-        import json
-        
+       
         action = self.request.arguments['action'][0]
+        company_id = self.request.arguments['company_id'][0]
+        benefit_id = self.request.arguments['benefit_id'][0]
+        self.data_manager.update_activity_queue(action, company_id,benefit_id)
 
-        self.data_manager.update_activity_queue(action, self.request.arguments, company_id)
-        logging.info(json.dumps(action)) 
 
 """Clase que maneja las respuestas  de la actividad de una empresa"""  
 
@@ -198,7 +198,7 @@ class ActivityHandler(BaseHandler):
         import json
         company_id = self.get_argument("company_id")
         updates =self.data_manager.fetch_activity_queue(company_id)
-        logging.info(json.dumps(updates))
+        logging.info(updates)
         self.write(json.dumps(updates))
         
          

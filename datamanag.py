@@ -167,11 +167,29 @@ class DataManagement():
 			else:
 				return False							
 
-	def update_activity_queue(self, company_id, benefit):
-		company = self.db.companies_queue.find_one({'_id': company_id})
-		company['queue'].append(benefit)
+	def update_activity_queue(self, action,company_id, benefit_id):
+		from bson.dbref import DBRef 
+
+		company = self.db.company_queue.find_one({'_id': company_id})
+		dbref_obj = DBRef('benefits', benefit_id)
+		if action == "reserve":
+			company['queue'].append(dbref_obj)
+		else: 
+			if dbref_obj in company['queue']:
+				for i in range(len(company['queue'])):
+					if company['queue'][i] == dbref_obj:
+						company['queue'].pop(i)
+						break
+					else: 
+						pass	 
+
+
 		self.db.company_queue.save(company)
+		return None
 
 	def fetch_activity_queue(self,company_id):
 			record = self.db.company_queue.find_one({'_id':company_id }, limit = 10)
-			return record['queue']		 		
+			benefits = []
+			for i in record['queue']:
+				benefits.append(self.db.dereference(i))
+			return benefits		 		

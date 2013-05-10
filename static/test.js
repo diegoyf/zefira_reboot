@@ -24,10 +24,10 @@ $(document).ready(function ($) {
                     $(this).html(b);
                     
                     var beneficio = {
-                        'title' : $(this).parent().find("[name='benefit_title']").text() ,
-                        'description' : $(this).parent().find("[name='benefit_desc']").text(),
+                        'benefit_id' : $(this).parent().find("[name='benefit_id']").val(),
                         '_xsrf' : getCookie("_xsrf"),
-                        'action' : 'reserve'
+                        'action' : 'reserve',
+                        'company_id':$(this).parent().find("[name='company_id']").val()
                     }
                     
 
@@ -43,6 +43,20 @@ $(document).ready(function ($) {
                     
                 }else {
                     $(this).html(a);
+                    var beneficio = {
+                        'benefit_id' : $(this).parent().find("[name='benefit_id']").val(),
+                        'company_id':$(this).parent().find("[name='company_id']").val(),
+                        '_xsrf' : getCookie("_xsrf"),
+                        'action':'delete'
+                    }
+                    $.ajax({
+                        url: "/reserve",
+                        type: "POST",
+                        data:  beneficio,
+                        success : function(){
+                            console.log(beneficio)
+                        }
+                    })
                     
                 }
                 });
@@ -62,7 +76,7 @@ function addmsg(type, msg){
 
 function waitForMsg(){
         
-        document.company_id = $("#company_id").val(); 
+        document.company_id = "compSLBg4VMoSsWiucw/abRAoIsjdr2UCEZcjdg4PVTESNI="; 
         $.ajax({
             type: "GET",
             url: "/activity",
