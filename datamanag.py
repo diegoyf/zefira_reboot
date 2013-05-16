@@ -1,5 +1,5 @@
 import pymongo 
-
+import asyncmongo
 
 """ Clase que provee todas las funciones de administracion de
 datos de toda la aplicacion """ 
@@ -190,6 +190,9 @@ class DataManagement():
 	def fetch_activity_queue(self,company_id):
 			record = self.db.company_queue.find_one({'_id':company_id }, limit = 10)
 			benefits = []
-			for i in record['queue']:
-				benefits.append(self.db.dereference(i))
-			return benefits		 		
+			if len(record['queue']) == 0:
+				return record['queue']
+			else:	
+				for i in record['queue']:
+					benefits.append(self.db.dereference(i))
+				return benefits		 		

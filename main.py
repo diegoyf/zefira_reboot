@@ -11,8 +11,10 @@ import uimodules
 import requesthandlers
 import logging
 
+
 from tornado.options import define, options
 from datamanag import DataManagement
+from activity import ActivityMixin
 
 define("port", default = 8000, help= "run on given port", type=int)
 
@@ -57,7 +59,7 @@ class Application(tornado.web.Application):
         )
         
         self.dataManager = DataManagement("zefira")
-        
+        self.ActivityMix = ActivityMixin() 
         tornado.web.Application.__init__(self, handlers, **settings)
 
 """ Clase base de toda la autenticacion de la pagina. """
@@ -69,7 +71,10 @@ class BaseHandler(tornado.web.RequestHandler):
     @property
     def data_manager(self):
         return self.application.dataManager
-    
+    @property
+
+    def activitymix(self):
+        return self.application.ActivityMix
 
     #Funcion que utiliza los parametros seguros de LoginHandler para
     #llamar el usuario y retornar una array con su informacion
@@ -182,27 +187,34 @@ class PublishBenefitHandler(BaseHandler):
 
 
 class ReserveHandler(BaseHandler):
+    @tornado.web.asynchronous
     def post(self):
        
         action = self.request.arguments['action'][0]
         company_id = self.request.arguments['company_id'][0]
         benefit_id = self.request.arguments['benefit_id'][0]
-        self.data_manager.update_activity_queue(action, company_id,benefit_id)
+        self.activitymix.update_queue(benefit_id,company_id)
 
 
 """Clase que maneja las respuestas  de la actividad de una empresa"""  
 
-class ActivityHandler(BaseHandler):
-    
+class ActivityHandler(BaseHandler, ActivityMixin):
+    @tornado.web.asynchronous
     def get(self):
         import json
-        company_id = self.get_argument("company_id")
-        updates =self.data_manager.fetch_activity_queue(company_id)
-        logging.info(updates)
-        self.write(json.dumps(updates))
+        cursor = 0
+        company = self.get_argument("company_id")
+        self.activitymix.fetch_queue(self.on_updates,company)
         
-         
-      
+            
+    def on_updates(self, data, confirm_id, company_id) :
+        if self.request.connection.stream.closed():
+            return
+        if confirm_id == company_id:    
+            self.finish(data)   
+        
+        else:
+            pass
 """Funcion principal que levanta la aplicacion """
 
 def main():

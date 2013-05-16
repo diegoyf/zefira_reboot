@@ -4,10 +4,12 @@ $(document).ready(function ($) {
         $('.dropdown input, .dropdown label').click(function(e) {
     e.stopPropagation();
 
+       
   	});
     	if (window.location.pathname == "/cbox")
 		{
-			waitForMsg();
+			updater.poll();
+            
 		}
 
         if (window.location.pathname == "/box")
@@ -63,6 +65,10 @@ $(document).ready(function ($) {
                 
         }
     });
+
+
+
+
 function addmsg(type, msg){
         /* Simple helper to add a div.
         type is the name of a CSS class (old/new/error).
@@ -74,36 +80,61 @@ function addmsg(type, msg){
 
     }
 
-function waitForMsg(){
+
+var updater = {
+    errorSleepTime: 500,
+    cursor : null,
+
+    poll:function(){
+        var args = {"_xsrf": getCookie("_xsrf")};
+        if(updater.cursor) args.cursor = updater.cursor;
+        args.company_id = $("#company_id").val();
+         
         
-        document.company_id = "compSLBg4VMoSsWiucw/abRAoIsjdr2UCEZcjdg4PVTESNI="; 
         $.ajax({
-            type: "GET",
             url: "/activity",
+            type: "GET",
+            dataType: "text",
+            data: $.param(args),
+            success: updater.onSuccess,
+            error: updater.onError,
 
-            async: true, /* If set to non-async, browser shows page as "Loading.."*/
-            cache: false,
-            data: {"company_id" : document.company_id},
-            
-            timeout:50000, /* Timeout in ms */
-
-            success: function(data){ /* called when request to barge.php completes */
-                addmsg("new", data); /* Add response to a .msg div (with the "new" class)*/
-                setTimeout(
-                    waitForMsg, /* Request next message */
-                    10000 /* ..after 1 seconds */
-                );
-            },
-            error: function(XMLHttpRequest, textStatus, errorThrown){
-                addmsg("error", textStatus + " (" + errorThrown + ")");
-                setTimeout(
-                    waitForMsg, /* Try again after.. */
-                    10000); /* milliseconds (15seconds) */
-            }
         });
-    };
 
+    },
+    onSuccess: function(response) {
+        
+        updater.errorSleepTime = 500;
+        window.setTimeout(updater.poll,  0);
+    },
 
+    onError: function(response) {
+        updater.errorSleepTime *= 2;
+        console.log("Poll error; sleeping for", updater.errorSleepTime, "ms");
+        window.setTimeout(updater.poll, updater.errorSleepTime);
+    },
+
+    newMessages: function(response) {
+        if (!response.messages) return;
+        updater.cursor = response.cursor;
+        var messages = response.messages;
+        updater.cursor = messages[messages.length - 1].id;
+        console.log(messages.length, "new messages, cursor:", updater.cursor);
+        for (var i = 0; i < messages.length; i++) {
+            updater.showMessage(messages[i]);
+        }
+    },
+
+    showMessage: function(message) {
+        var existing = $("#m" + message.id);
+        if (existing.length > 0) return;
+        var node = $(message.html);
+        node.hide();
+        $("#inbox").append(node);
+        node.slideDown();
+    }
+
+};
 function getCookie(name) {
     var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
     return r ? r[1] : undefined;
