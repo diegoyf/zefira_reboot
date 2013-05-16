@@ -1,17 +1,16 @@
 <div id="signupform" >
 
-<form action="/signup" method="post" id="form">
+<form action="/signup" class= "signup" method="post" id="form">
 {% raw xsrf_form_html() %}
 
-<input type="text" name="username" placeholder="Nombre Usuario" /></br>
-<input type="text" name="nombre" placeholder="Nombre"/></br>
-<input type="text" name="apellido" placeholder="Apellido"/>
-</br>
-<input type="text" name="password" id="password" placeholder="Contraseña"/>
-
-</br>
 <input type="text" name="email" id="email" placeholder="E-mail"/>
+<input type="text" name="nombre" id="nombre" placeholder="Nombre"/>
+<input type="text" name="apellido" id="apellido"placeholder="Apellido"/>
+
+<input type="text" name="password" id="password" placeholder="Contraseña"/>
+<input type="text" name="confirm_password" id="confirm_password"placeholder="Repite Contraseña" />
 </br>
+
 <input type="hidden" value="clientes" name="branch" id="branch"/>
 <input type="submit" class="btn btn-primary "value="Registrate" />
 

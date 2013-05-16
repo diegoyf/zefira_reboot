@@ -40,6 +40,7 @@ class Application(tornado.web.Application):
             (r"/publish", PublishBenefitHandler),
             (r"/activity", ActivityHandler),
             (r"/reserve", ReserveHandler),
+            (r"/validate", ValidationHandler)
             #(r"/companies", requesthandlers.CompaniesHandler),
             #(r"/error", requesthandlers.ErrorHandler)
             ]
@@ -79,7 +80,7 @@ class BaseHandler(tornado.web.RequestHandler):
     #Funcion que utiliza los parametros seguros de LoginHandler para
     #llamar el usuario y retornar una array con su informacion
     def get_current_user(self):
-        user_id  = self.get_secure_cookie("username")
+        user_id  = self.get_secure_cookie("email")
         password = self.get_secure_cookie("password")
         branch = self.get_secure_cookie("branch")
         
@@ -101,7 +102,7 @@ class LoginHandler(BaseHandler):
     def post(self):
 
         
-        self.set_secure_cookie("username", self.get_argument("username"))
+        self.set_secure_cookie("email", self.get_argument("email"))
         self.set_secure_cookie("password", self.get_argument("password"))
         self.set_secure_cookie("branch", self.get_argument("branch"))
         if self.get_argument("branch") == "companies":
@@ -115,7 +116,7 @@ la aplicacion """
 class LogoutHandler(BaseHandler):
     def get(self):
         
-        self.clear_cookie("username")
+        self.clear_cookie("email")
         self.clear_cookie("password")
         self.clear_cookie("branch")
         self.redirect("/")
@@ -126,7 +127,7 @@ class SignUpHandler(BaseHandler):
     def post(self):
 
         branch = self.get_argument("branch")
-        self.set_secure_cookie("username", self.get_argument("username"))
+        self.set_secure_cookie("email", self.get_argument("email"))
         self.set_secure_cookie("password", self.get_argument("password"))
         self.set_secure_cookie("branch", self.get_argument("branch"))
         self.redirect(self.data_manager.create_user(branch,self.request.arguments))
@@ -198,7 +199,7 @@ class ReserveHandler(BaseHandler):
 
 """Clase que maneja las respuestas  de la actividad de una empresa"""  
 
-class ActivityHandler(BaseHandler, ActivityMixin):
+class ActivityHandler(BaseHandler):
     @tornado.web.asynchronous
     def get(self):
         import json
@@ -215,6 +216,14 @@ class ActivityHandler(BaseHandler, ActivityMixin):
         
         else:
             pass
+
+class ValidationHandler(BaseHandler):
+    def post(self):
+        branch = self.get_argument("branch")
+        response = self.data_manager.validate_email(self.get_argument("email"), branch)
+        logging.info(response)
+        self.write(str(response))
+
 """Funcion principal que levanta la aplicacion """
 
 def main():

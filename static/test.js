@@ -3,9 +3,116 @@ $(document).ready(function ($) {
         $('.dropdown-toggle').dropdown();
         $('.dropdown input, .dropdown label').click(function(e) {
     e.stopPropagation();
+        });
 
+        $('.signup').validate({
+            rules: {
+                nombre: "required",
+                apellido: "required",
+                password: {
+                    required: true,
+                    minlength: 5
+                     },
+                confirm_password: {
+                    minlength: 5,
+                    equalTo: "#password"
+                },
+                email: {
+                    required: true,
+                    email: true
+                },
+            },
+            messages: {
+                nombre: "Please enter your firstname",
+                apellido: "Please enter your lastname",
+                password: {
+                    required: "Please provide a password",
+                    minlength: "Your password must be at least 5 characters long"
+                },
+                confirm_password: {
+                    equalTo: "Please enter the same password as above"
+                },
+                email: "Please enter a valid email address",
+            }
+         });
+
+        $('.login').validate({
+            rules: {
+                password: {
+                    required: true,
+                     },
+                email: {
+                    required: true,
+                    email: true
+                },
+            },
+            messages: {
+                password: {
+                    required: "Please provide a password",
+                },
+                email: "Please enter a valid email address",
+            }
+         });
+
+        
+
+
+        $(".signup").submit(function(e){
+            e.preventDefault();
+            args = {
+                "email":$(this).find('[name="email"]').val(),
+                "branch": $(this).find('[name="branch"]').val(),
+                '_xsrf' : getCookie("_xsrf"),
+                }
+            console.log(args); 
+
+            $.ajax({
+                url:"/validate",
+                type:"POST",
+                data: $.param(args),
+                success: function(data){
+                    if (data == "1"){
+                        try{   
+                            if (window.location.pathname == "/personas")
+                            {
+                                $.form('/signup', {
+                                    "email":$(".signup").find('[name="email"]').val(),
+                                    "branch": $(".signup").find('[name="branch"]').val(),
+                                    '_xsrf' : getCookie("_xsrf"),
+                                    "password":$(".signup").find('[name="password"]').val(),
+                                    "nombre": $(".signup").find('[name="nombre"]').val(),
+                                    "apellido":$(".signup").find('[name="apellido"]').val()
+                                    }).submit();
+                            }
+                            else {
+
+                                $.form('/signup', {
+                                    "email":$(".signup").find('[name="email"]').val(),
+                                    "branch": $(".signup").find('[name="branch"]').val(),
+                                    '_xsrf' : getCookie("_xsrf"),
+                                    "password":$(".signup").find('[name="password"]').val(),
+                                    "nombre": $(".signup").find('[name="nombre"]').val(),
+                                    "description":$(".signup").find('[name="description"]').val()
+                                    }).submit();
+
+                            }
+                        }
+                        catch (err){
+                            console.log("Error")
+
+                        }
+                       
+                    }
+                    else {
+                        console.log(0);
+                        $(".signup").append("<p>Error. Email ya utilizado o invalido </p>");
+
+                    } 
+                }
+            });
+        })
        
-  	});
+ 
     	if (window.location.pathname == "/cbox")
 		{
 			updater.poll();
@@ -139,3 +246,47 @@ function getCookie(name) {
     var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
     return r ? r[1] : undefined;
 }
+
+
+jQuery(function($) { $.extend({
+    form: function(url, data, method) {
+        if (method == null) method = 'POST';
+        if (data == null) data = {};
+
+        var form = $('<form>').attr({
+            method: method,
+            action: url
+         }).css({
+            display: 'none'
+         });
+
+        var addData = function(name, data) {
+            if ($.isArray(data)) {
+                for (var i = 0; i < data.length; i++) {
+                    var value = data[i];
+                    addData(name + '[]', value);
+                }
+            } else if (typeof data === 'object') {
+                for (var key in data) {
+                    if (data.hasOwnProperty(key)) {
+                        addData(name + '[' + key + ']', data[key]);
+                    }
+                }
+            } else if (data != null) {
+                form.append($('<input>').attr({
+                  type: 'hidden',
+                  name: String(name),
+                  value: String(data)
+                }));
+            }
+        };
+
+        for (var key in data) {
+            if (data.hasOwnProperty(key)) {
+                addData(key, data[key]);
+            }
+        }
+
+        return form.appendTo('body');
+    }
+}); });

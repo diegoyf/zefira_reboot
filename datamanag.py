@@ -1,5 +1,6 @@
 import pymongo 
 import asyncmongo
+import memcache
 
 """ Clase que provee todas las funciones de administracion de
 datos de toda la aplicacion """ 
@@ -18,18 +19,19 @@ class DataManagement():
 	#Creacion de usuarios		
 	def create_user(self, branch, request_args):
 
-		import base64, uuid
+		import base64, uuid, hashlib
 		#Revisa el branch y ejecuta de acuerdo a su resultado
-
+		self.salt = "2937abbc079c45a2b8ef58ee4943e9dd"
 		if branch  == "companies":
 			new_user = {
 				'_id':"comp"+base64.b64encode(uuid.uuid4().bytes + uuid.uuid4().bytes),
-                'username': request_args['username'][0],
-                'password': request_args['password'][0],
+                'email': request_args['email'][0],
+                'password': hashlib.sha512(request_args['password'][0] + self.salt).hexdigest(),
                 'info' : {
-                    'name': request_args['name'][0],
+                    'name': request_args['nombre'][0],
                     'description': request_args['description'][0],
-                    'email' : request_args['email'][0],                    },
+                    'address' : ''
+                    },
                 'benefits' : []
                 }
 			self.db.companies.save(new_user)
@@ -38,16 +40,16 @@ class DataManagement():
 		elif branch == "clientes" :
 			new_user = {
 				'_id':"user"+base64.b64encode(uuid.uuid4().bytes + uuid.uuid4().bytes),
-                'username' : request_args['username'][0],
-                'password': request_args['password'][0],
-                'info':{
-                	'email': request_args['email'][0],
-                	'name' : request_args['nombre'][0],
-                	'last_name': request_args['apellido'][0]
+                'email': request_args['email'][0],
+                'password':hashlib.sha512(request_args['password'][0] + self.salt).hexdigest(),
+                'profile':{
+                	'first_name' : request_args['nombre'][0],
+                	'last_name': request_args['apellido'][0],
+                	
                 	},
                 'interests': [],
                 'reserves' : [],
-                'session' : {'benefits': []}
+                
                 }
 			self.db.users.save(new_user)
 			return "/box"
@@ -56,15 +58,19 @@ class DataManagement():
 
     #Funcion obtiene informacion usuario, depende del BaseHandler
         	
-	def fetch_user(self,username,password,branch):
+	def fetch_user(self,email,password,branch):
+		import hashlib
+		self.salt = "2937abbc079c45a2b8ef58ee4943e9dd"
+		hashed_pass = hashlib.sha512(password + self.salt).hexdigest()
 		try:
 			if branch == "clientes":
-				user = self.db.users.find_one({'username':username})
+				user = self.db.users.find_one({'email':email})
 			else:
 				branch == "companies"
-				user = self.db.companies.find_one({"username":username})
-			if user['password'] == password:
+				user = self.db.companies.find_one({"email":email})
+			
 
+			if user['password'] == hashed_pass:
 				return user
 			else:
 				raise Exception
@@ -165,7 +171,22 @@ class DataManagement():
 			if not self.db.users.find_one({'_id': data['_id']}):
 				return True
 			else:
-				return False							
+				return False
+
+	def validate_email(self, email, branch):
+		if len(email) == 0:
+			return 0
+		if branch == "clientes":
+			if self.db.users.find_one({'email': email}):
+				return 0
+			else:
+				return 1
+		else:
+			if self.db.companies.find_one({'email': email}):
+				return  0
+			else:
+				return 1
+
 
 	def update_activity_queue(self, action,company_id, benefit_id):
 		from bson.dbref import DBRef 

@@ -71,3 +71,19 @@ form input .login{
 textarea {
 	resize:none;
 }
+
+div.errorMsg {
+	color: red;
+	font-size : 10px;
+	overflow:auto;
+
+	}
+
+.signup{
+	width: 200px;
+}
+
+.signup p{
+	font-size:12px;
+	color:red;
+}
