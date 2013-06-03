@@ -217,3 +217,39 @@ class DataManagement():
 				for i in record['queue']:
 					benefits.append(self.db.dereference(i))
 				return benefits		 		
+
+ 	def fetch_companies(self, user_location, user_companies):
+ 		companies = []
+ 		if len(user_companies) == 0:
+ 			for i in self.db.companies.find({'location': user_location}, limit=10):
+ 				companies.append(i) 
+ 			for i in range(len(companies)):
+ 				companies[i]['message'] = "Seguir"
+ 			return companies
+		else:
+			for i in self.db.companies.find(limit=10):
+				companies.append(i)
+			ref = []
+			for i in user_companies:
+				ref.append(self.db.dereference(i))	
+
+			for i in companies:
+				if i in ref:
+					i['message'] = "Siguiendo"
+				else:
+					i['message'] = "Seguir"	
+		return companies			
+
+	def update_follow(self, company_id, user, action, callback):
+		from bson.dbref import DBRef
+		dbref_obj = DBRef('companies', company_id)
+ 		if action == "seguir":
+ 			user['interests'].append(dbref_obj)
+
+ 		else : 
+ 			for i in range(len(user['interests'])):
+ 				if user['interests'][i] == dbref_obj:
+ 					del user['interests'][i]
+ 					break
+ 		self.db.users.save(user)			
+ 		callback()

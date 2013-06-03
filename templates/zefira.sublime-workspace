@@ -1,0 +1,451 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"reset",
+				"resetPasswordUrl"
+			],
+			[
+				"shol",
+				"should_not"
+			],
+			[
+				"ed",
+				"end"
+			],
+			[
+				"shou",
+				"should_not"
+			],
+			[
+				"user",
+				"user_path"
+			],
+			[
+				"sign",
+				"sign_in"
+			],
+			[
+				"dee",
+				"delete"
+			],
+			[
+				"fill",
+				"fill_in"
+			],
+			[
+				"un",
+				"unless	unless … end"
+			],
+			[
+				"shu",
+				"should"
+			],
+			[
+				"cli",
+				"click_link"
+			],
+			[
+				"should",
+				"should_not"
+			],
+			[
+				"have",
+				"have_link"
+			],
+			[
+				"hav",
+				"have_link"
+			],
+			[
+				"fil",
+				"fill_in"
+			],
+			[
+				"sig",
+				"signup_path"
+			],
+			[
+				"ue",
+				"user"
+			],
+			[
+				"pas",
+				"password_confirmation"
+			],
+			[
+				"passwo",
+				"password_confirmation"
+			],
+			[
+				"pass",
+				"password"
+			],
+			[
+				"sh",
+				"should"
+			],
+			[
+				"passw",
+				"password_confirmation"
+			],
+			[
+				"be",
+				"be_valid"
+			],
+			[
+				"shul",
+				"should_not"
+			],
+			[
+				"sho",
+				"should_not"
+			],
+			[
+				"lin",
+				"link_to"
+			],
+			[
+				"infe",
+				"infer_base_class_for_anonymous_controllers"
+			],
+			[
+				"fix",
+				"fixture_path"
+			],
+			[
+				"rspec",
+				"rspec"
+			],
+			[
+				"moc",
+				"mock_with"
+			],
+			[
+				"R",
+				"RSpec"
+			],
+			[
+				"conf",
+				"config"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "/home/diego/zefiratest/admin/datamanag.py",
+			"settings":
+			{
+				"buffer_size": 9821,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 392.0,
+		"selected_items":
+		[
+		],
+		"width": 450.0
+	},
+	"console":
+	{
+		"height": 139.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/home/diego/zefiratest/admin/uimodules.py",
+		"/home/diego/zefiratest/admin/templates/admin-companies.html",
+		"/home/diego/zefiratest/admin/templates/modules/userco.html",
+		"/home/diego/zefiratest/admin/templates/modules/user.html",
+		"/home/diego/zefiratest/admin/templates/admin-home.html",
+		"/home/diego/zefiratest/admin/admin.py",
+		"/home/diego/zefiratest/admin/.gitignore",
+		"/home/diego/zefiratest/admin/templates/edit-user.html",
+		"/home/diego/zefiratest/zefira/main.py",
+		"/home/diego/zefiratest/admin/templates/admin-people.html",
+		"/home/diego/zefiratest/zefira/templates/cbox.html",
+		"/home/diego/zefiratest/admin/templates/admin-main.html",
+		"/home/diego/zefiratest/admin/static/test.css",
+		"/home/diego/zefiratest/admin/templates/user.html",
+		"/home/diego/zefiratest/zefira/uimodules.py",
+		"/home/diego/zefiratest/zefira/static/test.css",
+		"/home/diego/zefiratest/zefira/static/test.js",
+		"/home/diego/zefiratest/admin/templates/admin-base.html",
+		"/home/diego/zefiratest/zefira/templates/main.html",
+		"/home/diego/zefiratest/admin/templates/admin.main.html~",
+		"/home/diego/zefiratest/zefira/templates/login.html",
+		"/home/diego/zefiratest/zefira/datamanag.py",
+		"/home/diego/zefiratest/zefira/admin.py",
+		"/home/diego/zefiratest/zefira/requesthandlers.py",
+		"/home/diego/zefiratest/zefira3/templates/empresas.html",
+		"/home/diego/zefiratest/zefira3/templates/signupcl.html",
+		"/home/diego/zefiratest/zefira3/templates/signupcomp.html",
+		"/home/diego/zefiratest/zefira3/templates/clientes.html",
+		"/home/diego/zefiratest/zefira3/activity.py",
+		"/home/diego/zefiratest/zefira3/static/test.js",
+		"/home/diego/zefiratest/zefira2/uimodules.py",
+		"/home/diego/zefiratest/zefira2/templates/main.html",
+		"/home/diego/zefiratest/zefira2/templates/deploy.html",
+		"/home/diego/zefiratest/zefira2/requesthandlers.py",
+		"/home/diego/zefiratest/zefira2/templates/box.html",
+		"/home/diego/zefiratest/zefira2/static/test.css",
+		"/home/diego/zefiratest/zefira2/templates/handle.html",
+		"/home/diego/zefiratest/zefira2/templates/modules/benefitco.html",
+		"/home/diego/zefiratest/zefira2/templates/signupcomp.html",
+		"/home/diego/zefiratest/zefira2/templates/publish.html",
+		"/home/diego/zefiratest/zefira2/templates/empresas.html",
+		"/home/diego/zefiratest/zefira2/templates/handle2.html",
+		"/home/diego/zefiratest/zefira2/templates/signupcl.html",
+		"/home/diego/zefiratest/zefira1/uimodules.py",
+		"/home/diego/zefiratest/zefira2/templates/logincl.html",
+		"/home/diego/zefiratest/zefira2/templates/clientes.html",
+		"/home/diego/zefiratest/zefira2/templates/index.html",
+		"/home/diego/zefiratest/zefira2/.gitignore",
+		"/home/diego/zefiratest/zefira1/.gitignore",
+		"/home/diego/zefiratest/zefira1/.gitignore~",
+		"/home/diego/zefiratest/zefira2/templates/handle2.hmtl~",
+		"/home/diego/zefiratest/zefira2/templates/modules/benefit.html",
+		"/home/diego/zefiratest/zefira2/datamanag.py",
+		"/home/diego/zefiratest/zefira1/templates/index.html",
+		"/home/diego/zefiratest/zefira1/admin.py",
+		"/home/diego/zefiratest/zefira1/templates/main.html",
+		"/home/diego/zefiratest/zefira1/templates/box.html",
+		"/home/diego/zefiratest/zefira1/static/test.css",
+		"/home/diego/zefiratest/zefira1/main.py",
+		"/home/diego/zefiratest/zefira1/templates/handle2.html",
+		"/home/diego/zefiratest/zefira1/templates/handle.html",
+		"/home/diego/zefiratest/zefira1/templates/cbox.html",
+		"/home/diego/zefiratest/zefira1/templates/modules/benefit.html",
+		"/home/diego/zefiratest/zefira1/templates/handle2.hmtl",
+		"/home/diego/Desktop/Tabs-Pills-BEGIN/tabs-pills.html",
+		"/home/diego/rails/sample_app/app/views/layouts/_header.html.erb",
+		"/home/diego/rails/sample_app/app/views/layouts/application.html.erb",
+		"/home/diego/zefiratest/zefira1/templates/snipp",
+		"/home/diego/zefiratest/zefira1/templates/empresas.html",
+		"/home/diego/zefiratest/zefira1/templates/signupcomp.html",
+		"/home/diego/zefiratest/zefira1/templates/signupcl.html",
+		"/home/diego/zefiratest/zefira1/templates/clientes.html",
+		"/home/diego/rails/sample_app/app/assets/javascripts/application.js",
+		"/home/diego/zefiratest/zefira1/static/test.js",
+		"/home/diego/rails/sample_app/app/views/static_pages/home.html.erb",
+		"/home/diego/zefira2/templates/main.html",
+		"/home/diego/zefira2/main.py",
+		"/home/diego/zefira2/data_manag.py",
+		"/home/diego/zefira2/templates/empresas.html",
+		"/home/diego/zefira2/requesthandlers.py",
+		"/home/diego/zefira2/templates/logincomp.html",
+		"/home/diego/zefira2/templates/index.html",
+		"/home/diego/zefira2/templates/signupcl.html",
+		"/home/diego/zefira2/templates/clientes.html",
+		"/home/diego/zefira2/templates/logincl.html",
+		"/home/diego/zefira1/admin.py",
+		"/home/diego/zefira1/data_manag.py",
+		"/home/diego/zefira2/models.py",
+		"/home/diego/zefira1/main.py",
+		"/home/diego/zefira/data_manag.py",
+		"/home/diego/zefira/main.py",
+		"/home/diego/zefira2/handlers.py",
+		"/home/diego/nodetest/node_app/app.js",
+		"/home/diego/nodetest/node_app/models/Account.js",
+		"/home/diego/nodetest/node_app/public/js/router.js",
+		"/home/diego/nodetest/node_app/public/js/SocialNet.js",
+		"/home/diego/nodetest/node_app/public/js/views/login.js",
+		"/home/diego/nodetest/node_app/public/js/views/register.js",
+		"/home/diego/nodetest/node_app/public/js/views/index.js",
+		"/home/diego/nodetest/node_app/public/templates/login.html",
+		"/home/diego/nodetest/node_app/register.html",
+		"/home/diego/.config/sublime-text-2/Packages/Default/Preferences.sublime-settings",
+		"/home/diego/.config/sublime-text-2/Packages/User/Preferences.sublime-settings",
+		"/home/diego/nodetest/node_app/public/js/boot.js",
+		"/home/diego/nodetest/node_app/views/index.jade",
+		"/home/diego/nodetest/node_app/package.json",
+		"/home/diego/nodetest/node_app/views/stooges.jade",
+		"/home/diego/nodetest/node_app/packages.json",
+		"/home/diego/rails/sample_app/app/models/user.rb",
+		"/home/diego/rails/sample_app/spec/models/user_spec.rb",
+		"/home/diego/rails/sample_app/app/models/micropost.rb",
+		"/home/diego/rails/sample_app/spec/models/micropost_spec.rb",
+		"/home/diego/rails/sample_app/db/migrate/20130427015232_create_microposts.rb",
+		"/home/diego/rails/sample_app/app/views/users/_user.html.erb",
+		"/home/diego/rails/sample_app/spec/requests/user_pages_spec.rb",
+		"/home/diego/rails/sample_app/spec/factories.rb",
+		"/home/diego/rails/sample_app/spec/requests/authentication_pages_spec.rb",
+		"/home/diego/rails/sample_app/app/controllers/users_controller.rb",
+		"/home/diego/rails/sample_app/lib/tasks/sample_data.rake",
+		"/home/diego/rails/sample_app/db/migrate/20130425050011_add_admin_to_users.rb",
+		"/home/diego/rails/sample_app/app/views/users/index.html.erb",
+		"/home/diego/rails/sample_app/app/assets/stylesheets/static_pages.css.scss",
+		"/home/diego/rails/sample_app/Gemfile",
+		"/home/diego/rails/sample_app/app/helpers/users_helper.rb",
+		"/home/diego/rails/sample_app/app/views/users/show.html.erb",
+		"/home/diego/rails/sample_app/app/helpers/sessions_helper.rb",
+		"/home/diego/rails/sample_app/app/controllers/sessions_controller.rb",
+		"/home/diego/rails/sample_app/spec/support/utilities.rb"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"Companiez",
+			"%}\n",
+			"username",
+			"user[username]",
+			"type",
+			";\">",
+			"Empresas",
+			"all",
+			"{@",
+			"diego",
+			"yaml"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "/home/diego/zefiratest/admin/datamanag.py",
+					"settings":
+					{
+						"buffer_size": 9821,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								9756,
+								9756
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 3696.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		},
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 0.0
+	},
+	"input":
+	{
+		"height": 33.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			],
+			[
+				1,
+				0,
+				2,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			0.5,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 112.0
+	},
+	"replace":
+	{
+		"height": 0.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"selected_items":
+		[
+		],
+		"width": 380.0
+	},
+	"show_minimap": false,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 223.0,
+	"status_bar_visible": true
+}

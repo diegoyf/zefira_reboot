@@ -87,3 +87,17 @@ div.errorMsg {
 	font-size:12px;
 	color:red;
 }
+
+#mainnavbar {
+    background-color:#B452CD;
+}
+
+#mainbar {
+    background-color:#B452CD;
+
+}
+
+#contenido-principal {
+	margin: 0px;
+	width:800px;
+}

@@ -29,16 +29,9 @@
 					</form>
 				</div>
 			</div>
-	<div class="container-fluid">
-		<div class="row-fluid">
-			<div class="span2">
-	
-	 
-        
-	</br>
-
-	{% include "handle2.html" %}
-	</div>
+	<div class="container">
+		
+			<div class="centre">
 
 	<div class="span10" id="contenido-principal">
 		<div class="tab-pane" id="pills-basic">
@@ -47,15 +40,14 @@
 			<li class="active">
 				<a href="#box-panel" data-toggle="tab"> Beneficios</a>
 			</li>
+			<li> <a href="#personaliza-panel" data-toggle="tab">Personaliza </a> </li>
 
 			<li><a href="#reservas-panel" data-toggle="tab"> Reservas </a>
 				</li>
-				<li>
-					<a href="#hitos-panel" data-toggle="tab"> Hitos </a>
-				</li>
+				
 				<li> <a href="#grupos-panel" data-toggle="tab">Grupos </a>
 				</li>
-				<li> <a href="#personaliza-panel" data-toggle="tab">Personaliza </a> </li>
+				
 
  			</ul>
 			<div class="tab-content">
@@ -64,7 +56,8 @@
 
 
 					{% if not benefits %}
-					<p> No estas siguiendo a ninguna empresa o las que estas siguiendo no han publicado nada aun.</p><p> Enterate quienes estan y que estan publicando <a href="/companies"> Aqui</a></p>
+					<h2><small> No estas siguiendo a ninguna empresa o las que estas siguiendo no han publicado nada aun.</small></h2>
+					<p><small> Enterate quienes estan y que estan publicando <a href="/companies"> Aqui</a></small></p>
 					{% end %}
 					{% if benefits %}
 					{% for benefit in benefits %}
@@ -73,23 +66,30 @@
 					{% end %}
     				{% end %}
     			</div>
-    			<div id="reservas-panel" class="tab-pane">
-    				<h1> En construccion reservas</h1>
-    			</div>
-    			<div id="hitos-panel" class="tab-pane">
-    				<h1> En construccion eventos</h1>
-    			</div>
-    			<div id="grupos-panel" class="tab-pane">
-    				<h1> En construccion grupos</h1>
-    			</div>
     			<div id="personaliza-panel" class="tab-pane">
-    				<h1> En construccion filtros</h1>
+    				{% if not companies %}
+    				<h2><small>No hay empresas disponibles </small></h2>
+    				{% end %}
+    				{% if companies %}
+    					{% for company in companies %}
+    						{{ modules.Company(company)}}
+    					{% end %}
+    				{% end %}		
     			</div>
+    			<div id="reservas-panel" class="tab-pane">
+    				<h1><small> En construccion reservas
+    				</small></h1>
+    			</div>
+    			
+    			<div id="grupos-panel" class="tab-pane">
+    				<h1><small> En construccion grupos</small></h1>
+    			</div>
+    			
     		</div>
     	</div>
     </div>
 		</div>		
-    	
+    	</div>
 	</div>
 	</div>
     

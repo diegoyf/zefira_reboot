@@ -121,11 +121,11 @@ $(document).ready(function ($) {
 
         if (window.location.pathname == "/box")
         {   
-            var a = "Reservar";
+            var a = $(".beneficio").html();
             var b = "Reservado";
             var i = 0;
 
-            $(".beneficio").html(a);    
+                
             $(".beneficio").click(function(){
                 i++;
                 if (i%2 != 0) {
@@ -160,6 +160,60 @@ $(document).ready(function ($) {
                     }
                     $.ajax({
                         url: "/reserve",
+                        type: "POST",
+                        data:  beneficio,
+                        success : function(){
+                            console.log(beneficio)
+                        }
+                    })
+                    
+                }
+                });
+                
+        }
+
+        if (window.location.pathname == "/companies")
+        {   
+            var a = $(".seguir").html();
+            var b = "Siguiendo";
+
+            var i = 0;
+
+                
+            $(".seguir").click(function(){
+                i++;
+                
+                if (i%2 != 0) {
+                    $(this).html(b);
+                    
+                    
+                    var beneficio = {
+                        'company_id':$(this).parent().find("[name='company_id']").val(),
+                        '_xsrf' : getCookie("_xsrf"),
+                        'action':'seguir'
+                    }
+                    
+
+                    $.ajax({
+                        url: '/follow',
+                        type: "POST",
+                        data : beneficio,
+                        success: function(){
+                            console.log(beneficio);
+                        }});
+
+
+                    
+                }else {
+                    $(this).html(a);
+                    var beneficio = {
+
+                        'company_id':$(this).parent().find("[name='company_id']").val(),
+                        '_xsrf' : getCookie("_xsrf"),
+                        'action': 'borrar'
+                    }
+                    $.ajax({
+                        url: "/follow",
                         type: "POST",
                         data:  beneficio,
                         success : function(){

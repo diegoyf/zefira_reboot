@@ -136,29 +136,53 @@
 	"buffers":
 	[
 		{
-			"contents": "import pymongo \nimport asyncmongo\nimport memcache\n\n\"\"\" Clase que provee todas las funciones de administracion de\ndatos de toda la aplicacion \"\"\" \n\nclass DataManagement():\n\n	#Funcion de inicio de la clase\n	#Un parametro: string nombre de la base de datos\n	def __init__(self,database):\n\n		if database == \"zefira\":\n\n			conn = pymongo.Connection(\"localhost\", 27017)\n			self.db = conn.zefira\n\n	#Creacion de usuarios		\n	def create_user(self, branch, request_args):\n\n		import base64, uuid\n		#Revisa el branch y ejecuta de acuerdo a su resultado\n\n		if branch  == \"companies\":\n			new_user = {\n				'_id':\"comp\"+base64.b64encode(uuid.uuid4().bytes + uuid.uuid4().bytes),\n                'username': request_args['username'][0],\n                'password': request_args['password'][0],\n                'info' : {\n                    'name': request_args['name'][0],\n                    'description': request_args['description'][0],\n                    'email' : request_args['email'][0],                    },\n                'benefits' : []\n                }\n			self.db.companies.save(new_user)\n			return \"/cbox\"\n\n		elif branch == \"clientes\" :\n			new_user = {\n				'_id':\"user\"+base64.b64encode(uuid.uuid4().bytes + uuid.uuid4().bytes),\n                'username' : request_args['username'][0],\n                'password': request_args['password'][0],\n                'info':{\n                	'email': request_args['email'][0],\n                	'name' : request_args['nombre'][0],\n                	'last_name': request_args['apellido'][0]\n                	},\n                'interests': [],\n                'reserves' : [],\n                'session' : {'benefits': []}\n                }\n			self.db.users.save(new_user)\n			return \"/box\"\n		else:\n			return \"/error\"\n\n    #Funcion obtiene informacion usuario, depende del BaseHandler\n        	\n	def fetch_user(self,username,password,branch):\n		try:\n			if branch == \"clientes\":\n				user = self.db.users.find_one({'username':username})\n			else:\n				branch == \"companies\"\n				user = self.db.companies.find_one({\"username\":username})\n			if user['password'] == password:\n\n				return user\n			else:\n				raise Exception\n		except:\n			return None\n\n\n	#Funcion que utiliza el nombre de usuario para llamar todos sus\n	#beneficios y reservas\n\n	def fetch_benefits_usr(self,interests_ref, user):\n		companies_followd = []\n		benefits_dref = []\n		benefits = []\n\n		if len(interests_ref) == 0: \n			return None\n		else:\n			for i in interests_ref[:7]:\n				companies_followd.append(self.db.dereference(i))\n			for j in range(len(companies_followd)):\n				for i in range(len(companies_followd[j]['benefits'])):\n					benefits_dref.append(companies_followd[j]['benefits'][i])\n		for i in benefits_dref:\n			benefits.append(self.db.dereference(i))\n\n		reserves = user['reserves']\n		if len(reserves) == 0 :\n			for i in benefits:\n				i['message'] = \"Reservar\" \n		else:\n			reserves_dref = []\n			for i in range(len(reserves)):\n				reserves_dref.append(self.db.dereference(reserves[i]))\n			for i in benefits:\n				if i in reserves_dref:\n					i['message'] = \"Reservado\"\n				else:\n					i['message'] = \"Reservar\"\n		return benefits\n\n	#Funcion que utiliza el nombre de usuario  empresa para llamar\n	#beneficios\n\n	def fetch_benefits_cmp(self, benefits_ref):\n\n		benefits_deref = []\n		if not benefits_ref:\n			return None\n		for i in range(len(benefits_ref)):\n			benefits_deref.append(self.db.dereference(benefits_ref[i]))\n		return benefits_deref\n\n	#Funcion que se encarga de la publicacion de beneficios\n\n	def publish_benefit(self, request_args, user):\n		import base64, uuid\n		import datetime\n		benefit = {\n			\"_id\":\"bene\"+base64.b64encode(uuid.uuid4().bytes + uuid.uuid4().bytes),\n            \"title\":request_args['title'][0],\n            \"description\": request_args['description'][0],\n            \"company_name\": user['info']['name'],\n            'date_published' : datetime.datetime.now(),\n            'active': True,\n            'dates_reserved': [],\n            'dates_validated': [],\n            'times_reserved': 0,\n            'times_validated': 0 ,\n            #'picture_id': '',\n            'benefit_type' :request_args['benefit_type'][0],\n		}\n\n		from bson.dbref import DBRef\n		if self.validate(benefit):\n			self.db.benefits.save(benefit)\n			user['benefits'].append(DBRef('benefits', benefit[\"_id\"]))\n			self.db.companies.save(user)\n			return True\n		else:\n			return False\n\n	def validate(self,data):\n		branch= data['_id'][:4]\n\n		if branch == 'bene':\n\n			if not self.db.benefits.find_one({'_id': data['_id']}):\n				return True\n			else:\n				return False\n		elif branch == \"comp\":\n			if not self.db.companies.find_one({'_id':data['_id']}):\n				return True\n			else:\n				return False\n		else:\n			if not self.db.users.find_one({'_id': data['_id']}):\n				return True\n			else:\n				return False							\n\n	def update_activity_queue(self, action,company_id, benefit_id):\n		from bson.dbref import DBRef \n\n		company = self.db.company_queue.find_one({'_id': company_id})\n		dbref_obj = DBRef('benefits', benefit_id)\n		if action == \"reserve\":\n			company['queue'].append(dbref_obj)\n		else: \n			if dbref_obj in company['queue']:\n				for i in range(len(company['queue'])):\n					if company['queue'][i] == dbref_obj:\n						company['queue'].pop(i)\n						break\n					else: \n						pass	 \n\n\n		self.db.company_queue.save(company)\n		return None\n\n	def fetch_activity_queue(self,company_id):\n			record = self.db.company_queue.find_one({'_id':company_id }, limit = 10)\n			benefits = []\n			if len(record['queue']) == 0:\n				return record['queue']\n			else:	\n				for i in record['queue']:\n					benefits.append(self.db.dereference(i))\n				return benefits		 		",
-			"file": "datamanag.py",
-			"file_size": 5602,
-			"file_write_time": 1368498749000000,
-			"settings":
-			{
-				"buffer_size": 5618,
-				"line_ending": "Unix"
-			}
-		},
-		{
+			"contents": "\"\"\"Zefira application v1.0 \"\"\"\n\nimport tornado.httpserver\nimport tornado.web\nimport tornado.ioloop\nimport tornado.options\nimport tornado.gen\nimport os.path\nimport datetime\nimport uimodules\nimport requesthandlers\nimport logging\n\n\nfrom tornado.options import define, options\nfrom datamanag import DataManagement\nfrom activity import ActivityMixin\n\ndefine(\"port\", default = 8000, help= \"run on given port\", type=int)\n\n\"\"\"*************************************************************************\nApplication: Clase principal que inicializa los handlers e inicia la conexion \ncon la base de datos. Ademas, asigna los modulosUI, los paths para los archivos\nestaticos, templates, y otras settings de seguridad y cookies.\n\n************************************************************************\"\"\"\n\n\nclass Application(tornado.web.Application):\n    def __init__(self):\n        handlers = [\n            (r\"/\", requesthandlers.MainHandler),\n            (r\"/personas\", requesthandlers.PersonasHandler),\n            (r\"/empresas\", requesthandlers.EmpresasHandler),\n            (r\"/login\", LoginHandler),\n            (r\"/logout\", LogoutHandler),\n            (r\"/signup\", SignUpHandler),\n            (r\"/box\", BoxHandler),\n            (r\"/cbox\", CBoxHandler),\n            (r\"/publish\", PublishBenefitHandler),\n            (r\"/activity\", ActivityHandler),\n            (r\"/reserve\", ReserveHandler),\n            (r\"/validate\", ValidationHandler),\n            (r\"/companies\", BrandsHandler),\n            (r\"/follow\", FollowHandler),\n            (r\"/api/test\", ApiHandler)\n           \n            #(r\"/error\", requesthandlers.ErrorHandler)\n            ]\n        settings = dict(\n            template_path = os.path.join(os.path.dirname(__file__), \"templates\"),\n            static_path = os.path.join(os.path.dirname(__file__),\"static\"),\n            ui_modules={\n                \"Benefit\" : uimodules.BenefitModule,\n                \"BenefitCo\": uimodules.BenefitCoModule,\n                \"Company\" : uimodules.CompanyModule,  \n             } ,         \n            debug = True,\n            cookie_secret = \"0azgrztWSuenSRWevq9GAOp/4bDtSET0q8YII0ZfLDc=\",\n            login_url = \"/login\",\n            xsrf_cookies = True,\n            autoescape = None,\n        )\n        \n        self.dataManager = DataManagement(\"zefira\")\n        self.ActivityMix = ActivityMixin() \n        tornado.web.Application.__init__(self, handlers, **settings)\n\n\"\"\" Clase base de toda la autenticacion de la pagina. \"\"\"\n\nclass BaseHandler(tornado.web.RequestHandler):\n    \n    #Decorador que retorna una instancia de la clase administrador\n    #para ser utilizada por la aplicacion\n    @property\n    def data_manager(self):\n        return self.application.dataManager\n    @property\n\n    def activitymix(self):\n        return self.application.ActivityMix\n\n    #Funcion que utiliza los parametros seguros de LoginHandler para\n    #llamar el usuario y retornar una array con su informacion\n    def get_current_user(self):\n        user_id  = self.get_secure_cookie(\"email\")\n        password = self.get_secure_cookie(\"password\")\n        branch = self.get_secure_cookie(\"branch\")\n        \n        user = self.application.dataManager.fetch_user(user_id, password, branch)\n        if user:\n            return user\n        else:\n            self.set_status(404)\n\n\n\"\"\" Clase que maneja el ingreso a la pagina \"\"\"\n\nclass LoginHandler(BaseHandler):\n    def get(self):\n        self.render(\"login.html\",\n                    page_title =\"Zefira | Login\",\n                    header_text= \"Ingresa a Zefira\",  \n                    )\n    def post(self):\n\n        \n        self.set_secure_cookie(\"email\", self.get_argument(\"email\"))\n        self.set_secure_cookie(\"password\", self.get_argument(\"password\"))\n        self.set_secure_cookie(\"branch\", self.get_argument(\"branch\"))\n        if self.get_argument(\"branch\") == \"companies\":\n            self.redirect(\"/cbox\")\n        else:\n            self.redirect(\"/box\")\n\n\"\"\" Clase que se encarga del borrado de cookies y la salida de \nla aplicacion \"\"\"\n\nclass LogoutHandler(BaseHandler):\n    def get(self):\n        \n        self.clear_cookie(\"email\")\n        self.clear_cookie(\"password\")\n        self.clear_cookie(\"branch\")\n        self.redirect(\"/\")\n\n\"\"\" Clase que se encarga de la creacion de usuarios\nTipo Request: POST\"\"\"\nclass SignUpHandler(BaseHandler):\n    def post(self):\n\n        branch = self.get_argument(\"branch\")\n        self.set_secure_cookie(\"email\", self.get_argument(\"email\"))\n        self.set_secure_cookie(\"password\", self.get_argument(\"password\"))\n        self.set_secure_cookie(\"branch\", self.get_argument(\"branch\"))\n        self.redirect(self.data_manager.create_user(branch,self.request.arguments))\n\n\"\"\"Clase que maneja la presentacion del layout principal de \n la aplicacion en el area de los clientes Tipo Request: GET\"\"\"       \n\n\nclass BoxHandler(BaseHandler):\n\n    def get(self):\n        interests = self.current_user['interests']\n\n        benefits = self.data_manager.fetch_benefits_usr(interests, self.current_user)\n        \n        self.render(\n                \"box.html\",\n                page_title = \"Zefira | Inicio\",\n                header_text = \"Box\",\n                benefits = benefits,\n                )\n\n\"\"\"Clase que maneja la presentacion del layout principal de \nla aplicacion en el area de las empresas \"\"\"\n\nclass CBoxHandler(BaseHandler):\n    def get(self):\n        benefits_published = self.current_user['benefits']\n        \n        \n        if len(benefits_published) == 0 or benefits_published == None : \n            benefits_deref = None\n        else:\n\n            benefits_deref = self.data_manager.fetch_benefits_cmp(\n                benefits_published)\n\n            \n              \n\n        self.render(\n            \"cbox.html\",\n            page_title = \"Zefira | Company Box\",\n            benefits = benefits_deref,\n            company_id = self.current_user['_id']\n            )\n\n\n\"\"\"Handler que administra la publicacion de beneficios\"\"\"\n\nclass PublishBenefitHandler(BaseHandler):\n    def post(self):\n        if self.data_manager.publish_benefit(self.request.arguments, \n            self.current_user):\n            self.redirect(\"/cbox\")\n        else:\n            self.redirect(\"/error\")\n\n\nclass ReserveHandler(BaseHandler):\n    @tornado.web.asynchronous\n    def post(self):\n       \n        action = self.request.arguments['action'][0]\n        company_id = self.request.arguments['company_id'][0]\n        benefit_id = self.request.arguments['benefit_id'][0]\n        self.activitymix.update_queue(benefit_id,company_id)\n\n\n\"\"\"Clase que maneja las respuestas  de la actividad de una empresa\"\"\"  \n\nclass ActivityHandler(BaseHandler):\n    @tornado.web.asynchronous\n    def get(self):\n        import json\n        cursor = 0\n        company = self.get_argument(\"company_id\")\n        self.activitymix.fetch_queue(self.on_updates,company)\n        \n            \n    def on_updates(self, data, confirm_id, company_id) :\n        if self.request.connection.stream.closed():\n            return\n        if confirm_id == company_id:    \n            self.finish(data)   \n        \n        else:\n            pass\n\n\"\"\"Clase que maneja la validacion de usuarios y correos\"\"\"\n\nclass ValidationHandler(BaseHandler):\n    def post(self):\n        branch = self.get_argument(\"branch\")\n        response = self.data_manager.validate_email(self.get_argument(\"email\"), branch)\n        logging.info(response)\n        self.write(str(response))\n\nclass BrandsHandler(BaseHandler):\n    def get(self):\n        interests = self.current_user['interests']\n        companies = self.data_manager.fetch_companies(interests)\n        self.render(\n            \"copres.html\",\n            page_title = \"Zefira | Lista Marcas\",\n            companies = companies\n            )\nclass FollowHandler(BaseHandler):\n    @tornado.web.asynchronous\n    def post(self):\n        import json\n        company_id = self.get_argument(\"company_id\")\n        action = self.get_argument(\"action\")\n        self.data_manager.update_follow(company_id, \n            self.current_user ,action, self.on_response)\n        \n\n    def on_response(self):\n        if self.request.connection.stream.closed():\n            return\n            \n        self.finish()    \n        \nclass ApiHandler(tornado.web.RequestHandler):\n    def get(self):\n        import json\n        from tornado.escape import json_encode\n        doc = {\n        \"products\": [\n        {\n            \"pid\": \"1\",\n            \"name\": \"iPhone 4S\",\n            \"price\": \"300.00\",\n            \"created_at\": \"2012-04-29 02:04:02\",\n            \"updated_at\": \"0000-00-00 00:00:00\"\n        },\n        {\n            \"pid\": \"2\",\n            \"name\": \"Macbook Pro\",\n            \"price\": \"600.00\",\n            \"created_at\": \"2012-04-29 02:04:51\",\n            \"updated_at\": \"0000-00-00 00:00:00\"\n        },\n        {\n            \"pid\": \"3\",\n            \"name\": \"Macbook Air\",\n            \"price\": \"800.00\",\n            \"created_at\": \"2012-04-29 02:05:57\",\n            \"updated_at\": \"0000-00-00 00:00:00\"\n        },\n        {\n            \"pid\": \"4\",\n            \"name\": \"OS X Lion\",\n            \"price\": \"100.00\",\n            \"created_at\": \"2012-04-29 02:07:14\",\n            \"updated_at\": \"0000-00-00 00:00:00\"\n        }\n        ],\n    \"success\": 1\n    }\n        \n        self.write(json_encode(doc))\n\n\"\"\"Funcion principal que levanta la aplicacion \"\"\"\n\ndef main():\n    tornado.options.parse_command_line()\n    server = tornado.httpserver.HTTPServer(Application())\n    server.listen(options.port)\n    tornado.ioloop.IOLoop.instance().start()\n\nif __name__ == \"__main__\":\n    main()\n\n",
 			"file": "main.py",
+			"file_size": 9588,
+			"file_write_time": 1369322032000000,
 			"settings":
 			{
-				"buffer_size": 7372,
+				"buffer_size": 9592,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "activity.py",
+			"file": "templates/box.html",
 			"settings":
 			{
-				"buffer_size": 351,
+				"buffer_size": 2477,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "datamanag.py",
+			"settings":
+			{
+				"buffer_size": 7023,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "templates/signupcomp.html",
+			"settings":
+			{
+				"buffer_size": 669,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "uimodules.py",
+			"settings":
+			{
+				"buffer_size": 485,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "templates/modules/company.html",
+			"settings":
+			{
+				"buffer_size": 370,
 				"line_ending": "Unix"
 			}
 		},
@@ -166,7 +190,7 @@
 			"file": "static/test.js",
 			"settings":
 			{
-				"buffer_size": 4078,
+				"buffer_size": 10870,
 				"line_ending": "Unix"
 			}
 		},
@@ -186,6 +210,30 @@
 			"settings":
 			{
 				"buffer_size": 5083,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "templates/main.html",
+			"settings":
+			{
+				"buffer_size": 753,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "static/test.css",
+			"settings":
+			{
+				"buffer_size": 1065,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "templates/copres.html",
+			"settings":
+			{
+				"buffer_size": 1393,
 				"line_ending": "Unix"
 			}
 		}
@@ -214,6 +262,11 @@
 	},
 	"file_history":
 	[
+		"/home/diego/zefiratest/zefira3/templates/empresas.html",
+		"/home/diego/zefiratest/zefira3/templates/signupcl.html",
+		"/home/diego/zefiratest/zefira3/templates/signupcomp.html",
+		"/home/diego/zefiratest/zefira3/templates/clientes.html",
+		"/home/diego/zefiratest/zefira3/activity.py",
 		"/home/diego/zefiratest/zefira3/static/test.js",
 		"/home/diego/zefiratest/zefira2/uimodules.py",
 		"/home/diego/zefiratest/zefira2/templates/main.html",
@@ -336,9 +389,7 @@
 		"/home/diego/rails/sample_app/config/database.yml",
 		"/home/diego/.config/sublime-text-2/Packages/RubyTest/RubyTest.sublime-settings",
 		"/home/diego/rails/sample_app/config/boot.rb",
-		"/home/diego/rails/sample_app/app/controllers/static_pages_controller.rb",
-		"/home/diego/rails/sample_app/Guardfile",
-		"/home/diego/rails/sample_app/app/views/static_pages/contact.html.erb"
+		"/home/diego/rails/sample_app/app/controllers/static_pages_controller.rb"
 	],
 	"find":
 	{
@@ -356,6 +407,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"username",
 			"user[username]",
 			"type",
 			";\">",
@@ -381,50 +433,23 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "datamanag.py",
-					"settings":
-					{
-						"buffer_size": 5618,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								5359,
-								5359
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 2171.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
 					"file": "main.py",
 					"settings":
 					{
-						"buffer_size": 7372,
+						"buffer_size": 9592,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								7060,
-								7060
+								9239,
+								9239
 							]
 						],
 						"settings":
@@ -434,30 +459,108 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 2379.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 2,
-					"file": "activity.py",
+					"buffer": 1,
+					"file": "templates/box.html",
 					"settings":
 					{
-						"buffer_size": 351,
+						"buffer_size": 2477,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								196,
-								196
+								803,
+								803
 							]
 						],
 						"settings":
 						{
-							"auto_name": "",
+							"syntax": "Packages/HTML/HTML.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "datamanag.py",
+					"settings":
+					{
+						"buffer_size": 7023,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								6608,
+								6608
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 2808.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "templates/signupcomp.html",
+					"settings":
+					{
+						"buffer_size": 669,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								460,
+								460
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "uimodules.py",
+					"settings":
+					{
+						"buffer_size": 485,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								485,
+								485
+							]
+						],
+						"settings":
+						{
 							"syntax": "Packages/Python/Python.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
@@ -468,19 +571,51 @@
 					"type": "text"
 				},
 				{
-					"buffer": 3,
-					"file": "static/test.js",
+					"buffer": 5,
+					"file": "templates/modules/company.html",
 					"settings":
 					{
-						"buffer_size": 4078,
+						"buffer_size": 370,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2970,
-								2970
+								370,
+								370
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 6,
+					"file": "static/test.js",
+					"settings":
+					{
+						"buffer_size": 10870,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								6358,
+								6358
 							]
 						],
 						"settings":
@@ -490,19 +625,13 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1014.0,
+						"translation.y": 2214.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
-				}
-			]
-		},
-		{
-			"selected": 1,
-			"sheets":
-			[
+				},
 				{
-					"buffer": 4,
+					"buffer": 7,
 					"file": "/home/diego/Desktop/demos/chat/static/chat.js",
 					"settings":
 					{
@@ -530,7 +659,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 5,
+					"buffer": 8,
 					"file": "/home/diego/Desktop/demos/chat/chatdemo.py",
 					"settings":
 					{
@@ -541,8 +670,8 @@
 						"selection":
 						[
 							[
-								1645,
-								1645
+								962,
+								962
 							]
 						],
 						"settings":
@@ -552,7 +681,88 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 234.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "templates/main.html",
+					"settings":
+					{
+						"buffer_size": 753,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								493,
+								493
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "static/test.css",
+					"settings":
+					{
+						"buffer_size": 1065,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CSS/CSS.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 11,
+					"file": "templates/copres.html",
+					"settings":
+					{
+						"buffer_size": 1393,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								830,
+								830
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 390.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
