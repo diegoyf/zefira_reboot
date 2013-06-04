@@ -142,18 +142,23 @@ class SignUpHandler(BaseHandler):
 class BoxHandler(BaseHandler):
 
     def get(self):
+        import datetime
         interests = self.current_user['interests']
 
-        benefits = self.data_manager.fetch_benefits_usr(interests, self.current_user,self.current_user['location'])
+        benefits= self.data_manager.fetch_benefits_usr(interests, self.current_user,self.current_user['location'])
         
         companies = self.data_manager.fetch_companies(self.current_user['location'],interests)
-        logging.info(companies)
+        
+        cursor = datetime.datetime.now().__str__()
+        
         self.render(
                 "box.html",
                 page_title = "Zefira | Inicio",
                 header_text = "Box",
                 benefits = benefits,
-                companies = companies
+                companies = companies,
+                cursor = cursor
+                
                 )
 
 """Clase que maneja la presentacion del layout principal de 
@@ -168,7 +173,7 @@ class CBoxHandler(BaseHandler):
             benefits_deref = None
         else:
 
-            benefits_deref = self.data_manager.fetch_benefits_cmp(
+            benefits = self.data_manager.fetch_benefits_cmp(
                 benefits_published)
 
             
@@ -177,7 +182,7 @@ class CBoxHandler(BaseHandler):
         self.render(
             "cbox.html",
             page_title = "Zefira | Company Box",
-            benefits = benefits_deref,
+            benefits = benefits,
             company_id = self.current_user['_id']
             )
 

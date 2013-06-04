@@ -26,7 +26,7 @@
 			
 				</div>
 			</div>
-	<div class="container">
+	
 		
 			<div class="centre">
 
@@ -57,6 +57,7 @@
 					<p><small> Enterate quienes estan y que estan publicando <a href="/companies"> Aqui</a></small></p>
 					{% end %}
 					{% if benefits %}
+					<input type="hidden" id="cursor" value="{{cursor}}"/>	
 					{% for benefit in benefits %}
 					{{ modules.Benefit(benefit) }}
 	
@@ -87,14 +88,21 @@
     			</div>
     			
     		</div>
+
     	</div>
     </div>
-		</div>		
+    <div class="footer">
+		<a href="#" style="text-align:center;margin-top:20px" id="more-posts">More Benefits</a>	
+	</div>
+		</div>
+		
     	</div>
-	</div>
-	</div>
-    
-	</div>
+    	
+
+	
+
+	
+
 
 	
 	

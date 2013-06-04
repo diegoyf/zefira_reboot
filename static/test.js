@@ -169,7 +169,22 @@ $(document).ready(function ($) {
                     
                 }
                 });
-                
+            $("#more-posts").click(function(e){
+
+                args = {
+                    'cursor': $("#cursor").val()
+                     }
+                console.log(args);
+
+                $.ajax({
+                    url:"/more-posts",
+                    type:"GET",
+                    data: $.param(args),
+                    success: function(response){
+
+                    }
+                })
+            });
         }
 
         if (window.location.pathname == "/companies")

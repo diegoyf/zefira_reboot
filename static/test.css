@@ -1,3 +1,7 @@
+body {
+	100%;
+}
+
 #sidebar {
     border-right: 1px solid black;
     height:100%;
@@ -100,4 +104,11 @@ div.errorMsg {
 #contenido-principal {
 	margin: 0px;
 	width:800px;
+}
+
+div.footer{
+	height:40px;
+	overflow:auto;
+	width:150px;
+	margin-top:20px;
 }
