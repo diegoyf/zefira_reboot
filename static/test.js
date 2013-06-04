@@ -121,7 +121,7 @@ $(document).ready(function ($) {
 
         if (window.location.pathname == "/box")
         {   
-            var a = $(".beneficio").html();
+            var a = "Reservar";
             var b = "Reservado";
             var i = 0;
 

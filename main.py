@@ -144,7 +144,7 @@ class BoxHandler(BaseHandler):
     def get(self):
         interests = self.current_user['interests']
 
-        benefits = self.data_manager.fetch_benefits_usr(interests, self.current_user)
+        benefits = self.data_manager.fetch_benefits_usr(interests, self.current_user,self.current_user['location'])
         
         companies = self.data_manager.fetch_companies(self.current_user['location'],interests)
         logging.info(companies)

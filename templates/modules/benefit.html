@@ -6,7 +6,7 @@
   
      
   <input type="hidden" id="benefit_id" name="benefit_id"value="{{ benefit['_id'] }}"/>
-  <input type="hidden" id="company_id" name="company_id" value="{{ benefit['company_id'] }}" />
+  <input type="hidden" id="company_id" name="company_id" value="{{ benefit['from']['id'] }}" />
   <div class="btn beneficio"> </div> 
 	{% module xsrf_form_html() %}
 
