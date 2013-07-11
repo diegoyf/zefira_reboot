@@ -150,24 +150,24 @@
 			"file": "main.py",
 			"settings":
 			{
-				"buffer_size": 7372,
-				"line_ending": "Unix"
+				"buffer_size": 7602,
+				"line_ending": "Windows"
 			}
 		},
 		{
 			"file": "activity.py",
 			"settings":
 			{
-				"buffer_size": 351,
-				"line_ending": "Unix"
+				"buffer_size": 450,
+				"line_ending": "Windows"
 			}
 		},
 		{
 			"file": "static/test.js",
 			"settings":
 			{
-				"buffer_size": 4078,
-				"line_ending": "Unix"
+				"buffer_size": 9252,
+				"line_ending": "Windows"
 			}
 		},
 		{
@@ -178,14 +178,6 @@
 			"settings":
 			{
 				"buffer_size": 4082,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/home/diego/Desktop/demos/chat/chatdemo.py",
-			"settings":
-			{
-				"buffer_size": 5083,
 				"line_ending": "Unix"
 			}
 		}
@@ -214,6 +206,7 @@
 	},
 	"file_history":
 	[
+		"/home/diego/Desktop/demos/chat/chatdemo.py",
 		"/home/diego/zefiratest/zefira3/static/test.js",
 		"/home/diego/zefiratest/zefira2/uimodules.py",
 		"/home/diego/zefiratest/zefira2/templates/main.html",
@@ -416,15 +409,15 @@
 					"file": "main.py",
 					"settings":
 					{
-						"buffer_size": 7372,
+						"buffer_size": 7602,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								7060,
-								7060
+								0,
+								0
 							]
 						],
 						"settings":
@@ -434,7 +427,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 2379.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -444,15 +437,15 @@
 					"file": "activity.py",
 					"settings":
 					{
-						"buffer_size": 351,
+						"buffer_size": 450,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								196,
-								196
+								0,
+								0
 							]
 						],
 						"settings":
@@ -472,15 +465,15 @@
 					"file": "static/test.js",
 					"settings":
 					{
-						"buffer_size": 4078,
+						"buffer_size": 9252,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2970,
-								2970
+								0,
+								0
 							]
 						],
 						"settings":
@@ -498,7 +491,7 @@
 			]
 		},
 		{
-			"selected": 1,
+			"selected": 0,
 			"sheets":
 			[
 				{
@@ -525,34 +518,6 @@
 						},
 						"translation.x": 0.0,
 						"translation.y": 975.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "/home/diego/Desktop/demos/chat/chatdemo.py",
-					"settings":
-					{
-						"buffer_size": 5083,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1645,
-								1645
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 234.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"

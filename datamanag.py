@@ -1,6 +1,5 @@
 import pymongo 
 import asyncmongo
-import memcache
 
 """ Clase que provee todas las funciones de administracion de
 datos de toda la aplicacion """ 
