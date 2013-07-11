@@ -81,26 +81,52 @@ class DataManagement():
 	#Funcion que utiliza el nombre de usuario para llamar todos sus
 	#beneficios y reservas
 
-	def fetch_benefits_usr(self,interests_ref, user, location):
-		
+	def fetch_benefits_usr(self,interests_ref, user, location, cursor):
+
 		benefits_id = []
-
 		
-		group = 20
-		batch = self.db.global_feed.find({'location': location}, limit=20, skip=0).sort('date-created', pymongo.DESCENDING)	
 
-		while True:
+		if cursor:
+			last = None
+			cr = self.db.global_feed.find({'location': location}).sort('date-created',pymongo.DESCENDING) 
+			count_base = 0
+			for entry in cr:
+				if entry['_id'] == cursor:
+					last = entry
+					count_base += 1
+					break
+				else:
+					count_base += 1
+
+			cursor = self.db.global_feed.find({'location': location}, skip = count_base).sort('date-created',pymongo.DESCENDING) 
+
+
+			count = 0
+			for entry in cursor:
+				if entry['from']['_id'] in interests_ref:
+					benefits_id.append(entry['_id'])
+					count += 1
+					if count == 5:
+						break
+
+		else:
+
+			count= 0
+			batch = self.db.global_feed.find({'location': location}).sort('date-created', pymongo.DESCENDING)	
+					
 			for entry in batch:
 				if entry['from']['_id'] in interests_ref:
 					benefits_id.append(entry['_id'])
-			if len(benefits_id) < 5:
-				batch = self.db.global_feed.find({'location': location}, limit=20, skip=group).sort('date-created', pymongo.DESCENDING)			
-				group += 20
-			else:
-				break
+					count += 1
+					if count == 5:
+						break
+
+							
+				
 
 		benefits = []
-		for i in benefits_id[:5]:
+
+		for i in benefits_id:
 			benefits.append(self.db.benefits.find_one({'_id': i}))
 
 		reserves = user['reserves']

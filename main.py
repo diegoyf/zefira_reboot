@@ -43,7 +43,7 @@ class Application(tornado.web.Application):
             (r"/validate", ValidationHandler),
             (r"/companies", BrandsHandler),
             (r"/follow", FollowHandler),
-            (r"/api/test", ApiHandler)
+            (r"/more-posts", MorePostsHandler)
            
             #(r"/error", requesthandlers.ErrorHandler)
             ]
@@ -143,14 +143,14 @@ class BoxHandler(BaseHandler):
 
     def get(self):
         import datetime
+
         interests = self.current_user['interests']
 
-        benefits= self.data_manager.fetch_benefits_usr(interests, self.current_user,self.current_user['location'])
+        benefits= self.data_manager.fetch_benefits_usr(interests, self.current_user,self.current_user['location'], cursor = None)
         
         companies = self.data_manager.fetch_companies(self.current_user['location'],interests)
         
-        cursor = datetime.datetime.now().__str__()
-        
+        cursor = benefits[-1]['_id']            
         self.render(
                 "box.html",
                 page_title = "Zefira | Inicio",
@@ -161,6 +161,18 @@ class BoxHandler(BaseHandler):
                 
                 )
 
+class MorePostsHandler(BaseHandler):
+    def get(self):
+        import json
+        import urllib
+        interests = self.current_user['interests']
+        cursor = urllib.unquote(self.get_argument("cursor", None))
+        more_posts = self.data_manager.fetch_benefits_usr(
+            interests, self.current_user, self.current_user['location'], cursor) 
+        more_posts.append({'cursor': more_posts[-1]['_id']}) 
+        logging.info(more_posts)
+        
+        self.write(json.dumps(more_posts)) 
 """Clase que maneja la presentacion del layout principal de 
 la aplicacion en el area de las empresas """
 

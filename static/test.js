@@ -181,11 +181,28 @@ $(document).ready(function ($) {
                     type:"GET",
                     data: $.param(args),
                     success: function(response){
+                        console.log(response)
+                        $.each($.parseJSON(response), function() {
+                            if (this.title){
+                            var div1 = $('<div class="benefits" style="overflow:auto">' +
+                                '<h3 name="benefit_title">' + this.title + '</h3></div>')
+                            $("#box-panel").append(div1)
+                            }
 
+                            else {
+                                
+                            }
+                        }
+                        )
+                        $("#cursor").val(response.cursor);
+                        console.log($("#cursor").val()); 
+
+
+                    
                     }
-                })
-            });
-        }
+                });
+            })
+        }    
 
         if (window.location.pathname == "/companies")
         {   
