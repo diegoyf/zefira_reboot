@@ -80,32 +80,62 @@ class DataManagement():
 	#Funcion que utiliza el nombre de usuario para llamar todos sus
 	#beneficios y reservas
 
-	def fetch_benefits_usr(self,interests_ref, user):
-		companies_followd = []
-		benefits_dref = []
+	def fetch_benefits_usr(self,interests_ref, user, location, cursor):
+
+		benefits_id = []
+		
+
+		if cursor:
+			last = None
+			cr = self.db.global_feed.find({'location': location}).sort('date-created',pymongo.DESCENDING) 
+			count_base = 0
+			for entry in cr:
+				if entry['_id'] == cursor:
+					last = entry
+					count_base += 1
+					break
+				else:
+					count_base += 1
+
+			cursor = self.db.global_feed.find({'location': location}, skip = count_base).sort('date-created',pymongo.DESCENDING) 
+
+
+			count = 0
+			for entry in cursor:
+				if entry['from']['_id'] in interests_ref:
+					benefits_id.append(entry['_id'])
+					count += 1
+					if count == 5:
+						break
+
+		else:
+
+			count= 0
+			batch = self.db.global_feed.find({'location': location}).sort('date-created', pymongo.DESCENDING)	
+					
+			for entry in batch:
+				if entry['from']['_id'] in interests_ref:
+					benefits_id.append(entry['_id'])
+					count += 1
+					if count == 5:
+						break
+
+							
+				
+
 		benefits = []
 
-		if len(interests_ref) == 0: 
-			return None
-		else:
-			for i in interests_ref[:7]:
-				companies_followd.append(self.db.dereference(i))
-			for j in range(len(companies_followd)):
-				for i in range(len(companies_followd[j]['benefits'])):
-					benefits_dref.append(companies_followd[j]['benefits'][i])
-		for i in benefits_dref:
-			benefits.append(self.db.dereference(i))
+		for i in benefits_id:
+			benefits.append(self.db.benefits.find_one({'_id': i}))
 
 		reserves = user['reserves']
+
 		if len(reserves) == 0 :
 			for i in benefits:
 				i['message'] = "Reservar" 
 		else:
-			reserves_dref = []
-			for i in range(len(reserves)):
-				reserves_dref.append(self.db.dereference(reserves[i]))
 			for i in benefits:
-				if i in reserves_dref:
+				if i['_id'] in reserves:
 					i['message'] = "Reservado"
 				else:
 					i['message'] = "Reservar"
@@ -113,15 +143,14 @@ class DataManagement():
 
 	#Funcion que utiliza el nombre de usuario  empresa para llamar
 	#beneficios
+	def fetch_benefits_cmp(self, benefits):
 
-	def fetch_benefits_cmp(self, benefits_ref):
-
-		benefits_deref = []
-		if not benefits_ref:
+		benefits_ret = []
+		if not benefits:
 			return None
-		for i in range(len(benefits_ref)):
-			benefits_deref.append(self.db.dereference(benefits_ref[i]))
-		return benefits_deref
+		for i in benefits:
+			benefits_ret.append(self.db.benefits.find_one({'_id':i}))
+		return benefits_ret
 
 	#Funcion que se encarga de la publicacion de beneficios
 
@@ -132,21 +161,40 @@ class DataManagement():
 			"_id":"bene"+base64.b64encode(uuid.uuid4().bytes + uuid.uuid4().bytes),
             "title":request_args['title'][0],
             "description": request_args['description'][0],
-            "company_name": user['info']['name'],
-            'date_published' : datetime.datetime.now(),
+            "from": {
+            	'id' : user['_id'],
+            	'name': user['name']
+            },
+            'date_published' : '',
             'active': True,
-            'dates_reserved': [],
-            'dates_validated': [],
-            'times_reserved': 0,
-            'times_validated': 0 ,
-            #'picture_id': '',
+            'reserves': {
+            	'data' : [],
+            	'count' : 0  
+            	}
+            ,
+            'validations': {
+            	'data': [],
+            	'count': 0 },
+
             'benefit_type' :request_args['benefit_type'][0],
 		}
 
-		from bson.dbref import DBRef
+		feed = {
+			'_id': benefit['_id'],
+			'location': {
+				'name': user['location']['name']
+			},
+			'from': {
+				'_id': user['_id'],
+				'name': user['name']
+			} 
+		}
+
+		
 		if self.validate(benefit):
-			self.db.benefits.save(benefit)
-			user['benefits'].append(DBRef('benefits', benefit["_id"]))
+			self.db.benefits.insert(benefit)
+			self.db.global_feed.insert(feed)
+			user['benefits'].append(benefit['_id'])
 			self.db.companies.save(user)
 			return True
 		else:
@@ -216,3 +264,36 @@ class DataManagement():
 				for i in record['queue']:
 					benefits.append(self.db.dereference(i))
 				return benefits		 		
+
+ 	def fetch_companies(self, user_location, user_companies):
+ 		companies = []
+ 		if len(user_companies) == 0:
+ 			for i in self.db.companies.find({'location': user_location}, limit=10):
+ 				companies.append(i) 
+ 			for i in range(len(companies)):
+ 				companies[i]['message'] = "Seguir"
+ 			return companies
+		else:
+			for i in self.db.companies.find(limit=10):
+				companies.append(i)	
+
+			for i in companies:
+				if i['_id'] in user_companies:
+					i['message'] = "Siguiendo"
+				else:
+					i['message'] = "Seguir"	
+		return companies			
+
+	def update_follow(self, company_id, user, action, callback):
+		from bson.dbref import DBRef
+		dbref_obj = DBRef('companies', company_id)
+ 		if action == "seguir":
+ 			user['interests'].append(dbref_obj)
+
+ 		else : 
+ 			for i in range(len(user['interests'])):
+ 				if user['interests'][i] == dbref_obj:
+ 					del user['interests'][i]
+ 					break
+ 		self.db.users.save(user)			
+ 		callback()

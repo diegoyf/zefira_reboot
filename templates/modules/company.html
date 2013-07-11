@@ -1,10 +1,10 @@
 <div class="company" style="overflow: auto">
-  <h3> {{ company["info"]['name'] }} </h3>
-  <p> {% raw company['info']["description"] %} </p>
-   <form action="" name="form" method="post" class="form">
-  {% module xsrf_form_html() %}
-  <input type="hidden" name="company_id" id="company_id" value= {{ company['_id'] }} />
-  <input type="submit" name="button" id="button" class="button" value="{{company['message'] }}"/>
-	</form>
+  <h3 name="company_name"> {{ company["name"] }} </h3>
+  <p name="company_desc"> {% raw company["description"] %} </p>
+  
+  <input type="hidden" id="company_id" name="company_id" value="{{ company['_id'] }}" />
+  <div class="btn seguir">{{ company['message'] }}</div> 
+	{% module xsrf_form_html() %}
 
 </div>
+

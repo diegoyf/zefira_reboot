@@ -14,3 +14,10 @@ class BenefitCoModule(tornado.web.UIModule):
 			"modules/benefitco.html",
 			benefit = benefit,
 			)
+
+class CompanyModule(tornado.web.UIModule):
+	def render(self,company):
+		return self.render_string(
+			"modules/company.html",
+			company = company
+			)

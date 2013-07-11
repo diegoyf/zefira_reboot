@@ -40,8 +40,11 @@ class Application(tornado.web.Application):
             (r"/publish", PublishBenefitHandler),
             (r"/activity", ActivityHandler),
             (r"/reserve", ReserveHandler),
-            (r"/validate", ValidationHandler)
-            #(r"/companies", requesthandlers.CompaniesHandler),
+            (r"/validate", ValidationHandler),
+            (r"/companies", BrandsHandler),
+            (r"/follow", FollowHandler),
+            (r"/more-posts", MorePostsHandler)
+           
             #(r"/error", requesthandlers.ErrorHandler)
             ]
         settings = dict(
@@ -50,7 +53,7 @@ class Application(tornado.web.Application):
             ui_modules={
                 "Benefit" : uimodules.BenefitModule,
                 "BenefitCo": uimodules.BenefitCoModule,
-             #   "Company" : uimodules.CompaniesModule},  
+                "Company" : uimodules.CompanyModule,  
              } ,         
             debug = True,
             cookie_secret = "0azgrztWSuenSRWevq9GAOp/4bDtSET0q8YII0ZfLDc=",
@@ -139,17 +142,37 @@ class SignUpHandler(BaseHandler):
 class BoxHandler(BaseHandler):
 
     def get(self):
+        import datetime
+
         interests = self.current_user['interests']
 
-        benefits = self.data_manager.fetch_benefits_usr(interests, self.current_user)
+        benefits= self.data_manager.fetch_benefits_usr(interests, self.current_user,self.current_user['location'], cursor = None)
         
+        companies = self.data_manager.fetch_companies(self.current_user['location'],interests)
+        
+        cursor = benefits[-1]['_id']            
         self.render(
                 "box.html",
                 page_title = "Zefira | Inicio",
                 header_text = "Box",
                 benefits = benefits,
+                companies = companies,
+                cursor = cursor
+                
                 )
 
+class MorePostsHandler(BaseHandler):
+    def get(self):
+        import json
+        import urllib
+        interests = self.current_user['interests']
+        cursor = urllib.unquote(self.get_argument("cursor", None))
+        more_posts = self.data_manager.fetch_benefits_usr(
+            interests, self.current_user, self.current_user['location'], cursor) 
+        more_posts.append({'cursor': more_posts[-1]['_id']}) 
+        logging.info(more_posts)
+        
+        self.write(json.dumps(more_posts)) 
 """Clase que maneja la presentacion del layout principal de 
 la aplicacion en el area de las empresas """
 
@@ -162,7 +185,7 @@ class CBoxHandler(BaseHandler):
             benefits_deref = None
         else:
 
-            benefits_deref = self.data_manager.fetch_benefits_cmp(
+            benefits = self.data_manager.fetch_benefits_cmp(
                 benefits_published)
 
             
@@ -171,7 +194,7 @@ class CBoxHandler(BaseHandler):
         self.render(
             "cbox.html",
             page_title = "Zefira | Company Box",
-            benefits = benefits_deref,
+            benefits = benefits,
             company_id = self.current_user['_id']
             )
 
@@ -217,12 +240,79 @@ class ActivityHandler(BaseHandler):
         else:
             pass
 
+"""Clase que maneja la validacion de usuarios y correos"""
+
 class ValidationHandler(BaseHandler):
     def post(self):
         branch = self.get_argument("branch")
         response = self.data_manager.validate_email(self.get_argument("email"), branch)
         logging.info(response)
         self.write(str(response))
+
+class BrandsHandler(BaseHandler):
+    def get(self):
+        interests = self.current_user['interests']
+        companies = self.data_manager.fetch_companies(interests)
+        self.render(
+            "copres.html",
+            page_title = "Zefira | Lista Marcas",
+            companies = companies
+            )
+class FollowHandler(BaseHandler):
+    @tornado.web.asynchronous
+    def post(self):
+        import json
+        company_id = self.get_argument("company_id")
+        action = self.get_argument("action")
+        self.data_manager.update_follow(company_id, 
+            self.current_user ,action, self.on_response)
+        
+
+    def on_response(self):
+        if self.request.connection.stream.closed():
+            return
+            
+        self.finish()    
+        
+class ApiHandler(tornado.web.RequestHandler):
+    def get(self):
+        import json
+        from tornado.escape import json_encode
+        doc = {
+        "products": [
+        {
+            "pid": "1",
+            "name": "iPhone 4S",
+            "price": "300.00",
+            "created_at": "2012-04-29 02:04:02",
+            "updated_at": "0000-00-00 00:00:00"
+        },
+        {
+            "pid": "2",
+            "name": "Macbook Pro",
+            "price": "600.00",
+            "created_at": "2012-04-29 02:04:51",
+            "updated_at": "0000-00-00 00:00:00"
+        },
+        {
+            "pid": "3",
+            "name": "Macbook Air",
+            "price": "800.00",
+            "created_at": "2012-04-29 02:05:57",
+            "updated_at": "0000-00-00 00:00:00"
+        },
+        {
+            "pid": "4",
+            "name": "OS X Lion",
+            "price": "100.00",
+            "created_at": "2012-04-29 02:07:14",
+            "updated_at": "0000-00-00 00:00:00"
+        }
+        ],
+    "success": 1
+    }
+        
+        self.write(json_encode(doc))
 
 """Funcion principal que levanta la aplicacion """
 

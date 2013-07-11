@@ -125,7 +125,7 @@ $(document).ready(function ($) {
             var b = "Reservado";
             var i = 0;
 
-            $(".beneficio").html(a);    
+                
             $(".beneficio").click(function(){
                 i++;
                 if (i%2 != 0) {
@@ -160,6 +160,92 @@ $(document).ready(function ($) {
                     }
                     $.ajax({
                         url: "/reserve",
+                        type: "POST",
+                        data:  beneficio,
+                        success : function(){
+                            console.log(beneficio)
+                        }
+                    })
+                    
+                }
+                });
+            $("#more-posts").click(function(e){
+
+                args = {
+                    'cursor': $("#cursor").val()
+                     }
+                console.log(args);
+
+                $.ajax({
+                    url:"/more-posts",
+                    type:"GET",
+                    data: $.param(args),
+                    success: function(response){
+                        console.log(response)
+                        $.each($.parseJSON(response), function() {
+                            if (this.title){
+                            var div1 = $('<div class="benefits" style="overflow:auto">' +
+                                '<h3 name="benefit_title">' + this.title + '</h3></div>')
+                            $("#box-panel").append(div1)
+                            }
+
+                            else {
+                                
+                            }
+                        }
+                        )
+                        $("#cursor").val(response.cursor);
+                        console.log($("#cursor").val()); 
+
+
+                    
+                    }
+                });
+            })
+        }    
+
+        if (window.location.pathname == "/companies")
+        {   
+            var a = $(".seguir").html();
+            var b = "Siguiendo";
+
+            var i = 0;
+
+                
+            $(".seguir").click(function(){
+                i++;
+                
+                if (i%2 != 0) {
+                    $(this).html(b);
+                    
+                    
+                    var beneficio = {
+                        'company_id':$(this).parent().find("[name='company_id']").val(),
+                        '_xsrf' : getCookie("_xsrf"),
+                        'action':'seguir'
+                    }
+                    
+
+                    $.ajax({
+                        url: '/follow',
+                        type: "POST",
+                        data : beneficio,
+                        success: function(){
+                            console.log(beneficio);
+                        }});
+
+
+                    
+                }else {
+                    $(this).html(a);
+                    var beneficio = {
+
+                        'company_id':$(this).parent().find("[name='company_id']").val(),
+                        '_xsrf' : getCookie("_xsrf"),
+                        'action': 'borrar'
+                    }
+                    $.ajax({
+                        url: "/follow",
                         type: "POST",
                         data:  beneficio,
                         success : function(){
